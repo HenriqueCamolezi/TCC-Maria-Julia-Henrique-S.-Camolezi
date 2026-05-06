@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria de Satoru Gojo | Site de Desenhos</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-trail"></div>
+
+    <header id="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Maria Julia & Henrique Camolezi</a>
+            
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="index.html#inicio" class="nav-link">Início</a></li>
+                    <li><a href="index.html#projetos" class="nav-link">Missões</a></li>
+                    <li><a href="index.html#habilidades" class="nav-link">Técnicas</a></li>
+                    <li><a href="index.html#contato" class="nav-link">Pacto</a></li>
+                </ul>
+            </nav>
+
+            <div class="controls">
+                <button id="theme-toggle" aria-label="Alternar Tema">🌙</button>
+                <button class="hamburger" aria-label="Abrir Menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="gallery section-hidden">
+            <div class="gallery-header">
+                <a href="index.html#projetos" class="btn-back">← Voltar aos Desenhos</a>
+                <h2 class="section-title">Galeria de <span>Satoru Gojo</span></h2>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="Satoru Gozo.jpg" alt="Satoru Gojo - Artwork 1" class="gallery-img">
+                </div>
+                <div class="gallery-item">
+                    <img src="Satoru Gozo.jpg" alt="Satoru Gojo - Artwork 2" class="gallery-img">
+                </div>
+                <div class="gallery-item">
+                    <img src="Satoru Gozo.jpg" alt="Satoru Gojo - Artwork 3" class="gallery-img">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Desenvolvido com Energia Absoluta por <strong>Maria Julia</strong> &</p><strong>Henrique Camolezi</strong>
+        <p class="small">© Galeria de Artes 2026 - Maria Julia & Henrique.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="lightbox.js"></script>
+</body>
+</html>
