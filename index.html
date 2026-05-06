@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site de Desenhos | Feiticeira/Feiticeiro Desenhista e Programador</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-trail"></div>
+
+    <header id="header">
+        <div class="nav-container">
+            <a href="#inicio" class="logo">Maria Julia & Henrique Camolezi</a>
+            
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#inicio" class="nav-link active">Início</a></li>
+                    <li><a href="#projetos" class="nav-link">Missões</a></li>
+                    <li><a href="#habilidades" class="nav-link">Técnicas</a></li>
+                    <li><a href="#contato" class="nav-link">Pacto</a></li>
+                </ul>
+            </nav>
+
+            <div class="controls">
+                <button id="theme-toggle" aria-label="Alternar Tema">🌙</button>
+                <button class="hamburger" aria-label="Abrir Menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero section-hidden">
+            <div class="hero-content">
+                <h2 class="greeting">Expansão de Domínio: Galeria Absoluta</h2>
+                <h1 class="name">Olá, eu sou <span>Maria Julia</span> & <span>Henrique Camolezi</span></h1>
+                <p class="subtitle">Nós somos <span id="typist"></span><span class="cursor-blink">|</span></p>
+                <p class="description">Artes desenhadas com energia amaldiçoada absoluta.</p>
+                
+                <div class="hero-buttons">
+                    <a href="#projetos" class="btn btn-primary">Ver Desenhos</a>
+                </div>
+            </div>
+            
+            <div class="hero-image-wrapper">
+                <img src="Carteirinha Jujutsu Henrique.png" alt="Foto de Perfil" class="profile-img">
+                <div class="aura-glow"></div>
+            </div>
+        </section>
+
+        <section id="projetos" class="projects section-hidden">
+            <h2 class="section-title">Desenhos de <span>Grau Especial</span></h2>
+            
+            <div class="projects-grid">
+                <article class="project-card">
+                    <div class="project-img-container">
+                        <img src="Satoru Gozo.jpg" alt="Satoru Gojo" class="project-img">
+                    </div>
+                    <div class="project-info">
+                        <h3>Satoru Gojo</h3>
+                        <p>Contem fanarts do personagem Suguru Geto.</p>
+                        <div class="tech-tags">
+                            <span>3</span>
+                        </div>
+                        <a href="#" class="btn-link">Acessar Pasta &rarr;</a>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-img-container">
+                        <img src="Suguru Getou.jpg" alt="Suguru Geto" class="project-img">
+                    </div>
+                    <div class="project-info">
+                        <h3>Suguru Geto</h3>
+                        <p>Contem fanarts do personagem Suguru Geto.</p>
+                        <div class="tech-tags">
+                            <span>3</span>
+                        </div>
+                        <a href="#" class="btn-link">Acessar Pasta &rarr;</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="habilidades" class="skills section-hidden">
+            <h2 class="section-title">Técnicas <span>Amaldiçoadas</span></h2>
+            
+            <div class="skills-container">
+                <div class="skills-category">
+                    <h3>Domínio de Artes</h3>
+                    
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Folha Branca</span>
+                            <span>100%</span>
+                        </div>
+                        <div class="progress-bg">
+                            <div class="progress-bar" data-width="100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span>Digital</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="progress-bg">
+                            <div class="progress-bar" data-width="90%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" class="contact section-hidden">
+            <h2 class="section-title">Pacto de <span>Vínculo</span></h2>
+            
+            <div class="social-links">
+                <a href="https://github.com/hannavalentine" class="social-btn">GitHub</a>
+                <a href="https://wa.me/+5516999945269" class="social-btn">WhatsApp</a>
+                <a href="mailto:mariajuliavallenterosada@gmail.com" class="social-btn">E-mail</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Desenvolvido com Energia Absoluta por <strong>Maria Julia</strong> &</p><strong>Henrique Camolezi</strong>
+        <p class="small">© Galeria de Artes 2026 - Maria Julia & Henrique.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
