@@ -29,6 +29,13 @@ const MAX_ZOOM = 3;
 const MIN_ZOOM = 1;
 const ZOOM_STEP = 0.2;
 
+// Variáveis para arrastar
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let offsetX = 0;
+let offsetY = 0;
+
 // Elementos do lightbox
 const modal = document.getElementById('lightbox-modal');
 const lightboxImage = modal.querySelector('.lightbox-image');
@@ -63,6 +70,8 @@ function closeLightbox() {
     modal.classList.remove('active');
     document.body.style.overflow = ''; // Restaura scroll
     zoomLevel = 1;
+    offsetX = 0;
+    offsetY = 0;
 }
 
 // Função para carregar a imagem atual
@@ -116,15 +125,82 @@ function zoomOut() {
 // Função para resetar zoom
 function resetZoom() {
     zoomLevel = 1;
+    offsetX = 0;
+    offsetY = 0;
     applyZoom();
 }
 
 // Função para aplicar o zoom à imagem
 function applyZoom() {
-    lightboxImage.style.transform = `scale(${zoomLevel.toFixed(2)})`;
+    lightboxImage.style.transform = `scale(${zoomLevel.toFixed(2)}) translate(${offsetX}px, ${offsetY}px)`;
 }
 
-// Event Listeners
+// =========================================================================
+// ZOOM COM MOUSE WHEEL (Scroll)
+// =========================================================================
+lightboxImage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    
+    if (e.deltaY < 0) {
+        // Scroll para cima = Zoom In
+        zoomIn();
+    } else {
+        // Scroll para baixo = Zoom Out
+        zoomOut();
+    }
+});
+
+// =========================================================================
+// ARRASTAR A IMAGEM (Drag and Drop)
+// =========================================================================
+lightboxImage.addEventListener('mousedown', (e) => {
+    // Só permite arrastar se estiver com zoom > 1
+    if (zoomLevel <= 1) return;
+    
+    isDragging = true;
+    dragStartX = e.clientX - offsetX;
+    dragStartY = e.clientY - offsetY;
+    lightboxImage.style.cursor = 'grabbing';
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging || zoomLevel <= 1) return;
+    
+    const newOffsetX = e.clientX - dragStartX;
+    const newOffsetY = e.clientY - dragStartY;
+    
+    // Limita o movimento para não ultrapassar os limites
+    const maxOffset = (zoomLevel - 1) * 100;
+    offsetX = Math.max(-maxOffset, Math.min(maxOffset, newOffsetX));
+    offsetY = Math.max(-maxOffset, Math.min(maxOffset, newOffsetY));
+    
+    applyZoom();
+});
+
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+    if (zoomLevel > 1) {
+        lightboxImage.style.cursor = 'grab';
+    } else {
+        lightboxImage.style.cursor = 'default';
+    }
+});
+
+// Atualiza o cursor quando entra/sai da imagem
+lightboxImage.addEventListener('mouseenter', () => {
+    if (zoomLevel > 1) {
+        lightboxImage.style.cursor = 'grab';
+    }
+});
+
+lightboxImage.addEventListener('mouseleave', () => {
+    lightboxImage.style.cursor = 'default';
+    isDragging = false;
+});
+
+// =========================================================================
+// EVENT LISTENERS
+// =========================================================================
 closeBtn.addEventListener('click', closeLightbox);
 prevBtn.addEventListener('click', prevImage);
 nextBtn.addEventListener('click', nextImage);
@@ -139,7 +215,9 @@ modal.addEventListener('click', (e) => {
     }
 });
 
-// Navegação com teclado
+// =========================================================================
+// NAVEGAÇÃO COM TECLADO
+// =========================================================================
 document.addEventListener('keydown', (e) => {
     if (!modal.classList.contains('active')) return;
     
@@ -164,7 +242,9 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Adiciona event listeners a todas as imagens da galeria
+// =========================================================================
+// INICIALIZAÇÃO
+// =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const galleryImages = document.querySelectorAll('.gallery-img');
     galleryImages.forEach(img => {

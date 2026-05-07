@@ -76,8 +76,8 @@ ul {
     height: 8px;
     background-color: var(--accent-primary);
     border-radius: 50%;
-    pointer-events: none; /* Garante que o cursor não atrapalhe cliques */
-    z-index: 9999;
+    pointer-events: none;
+    z-index: 99999;
     transform: translate(-50%, -50%);
     transition: width 0.2s, height 0.2s;
 }
@@ -89,7 +89,7 @@ ul {
     border: 1px solid var(--accent-primary);
     border-radius: 50%;
     pointer-events: none;
-    z-index: 9998;
+    z-index: 99998;
     transform: translate(-50%, -50%);
     transition: transform 0.1s ease, background-color 0.3s;
     box-shadow: 0 0 10px var(--accent-primary);
@@ -170,6 +170,7 @@ header {
     border: none;
     font-size: 1.5rem;
     transition: transform 0.3s ease;
+    cursor: pointer;
 }
 
 #theme-toggle:hover {
@@ -182,7 +183,8 @@ header {
     gap: 5px;
     background: none;
     border: none;
-    z-index: 1001; /* Fica acima do menu mobile */
+    z-index: 1001;
+    cursor: pointer;
 }
 
 .hamburger .bar {
@@ -259,14 +261,14 @@ section {
 
 .name span {
     color: var(--accent-primary);
-    text-shadow: 0 0 15px rgba(139, 0, 0, 0.3); /* Adaptará via root nas variações se quiser, mas mantemos sutil aqui */
+    text-shadow: 0 0 15px rgba(139, 0, 0, 0.3);
 }
 
 .subtitle {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    height: 2rem; /* Mantém a altura fixa para evitar pulos ao digitar */
+    height: 2rem;
 }
 
 .cursor-blink {
@@ -298,6 +300,8 @@ section {
     position: relative;
     overflow: hidden;
     z-index: 1;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-primary {
@@ -367,7 +371,7 @@ section {
 }
 
 /* =========================================================================
-   PROJECTS (Missões)
+   PROJECTS (Artes)
    ========================================================================= */
 .projects-grid {
     display: grid;
@@ -443,6 +447,7 @@ section {
     font-weight: 600;
     font-family: 'Oswald', sans-serif;
     transition: letter-spacing 0.3s ease;
+    cursor: pointer;
 }
 
 .project-card:hover .btn-link {
@@ -480,7 +485,7 @@ section {
 
 .progress-bar {
     height: 100%;
-    width: 0%; /* Inicia em 0, JS anima preenchendo */
+    width: 0%;
     background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));
     border-radius: 4px;
     transition: width 1.5s cubic-bezier(0.1, 0.7, 0.1, 1);
@@ -515,6 +520,7 @@ section {
     font-size: 1.2rem;
     border-radius: 8px;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .social-btn:hover {
@@ -546,76 +552,11 @@ footer .small {
 }
 
 /* =========================================================================
-   MEDIA QUERIES (Responsividade Mobile)
-   ========================================================================= */
-@media (max-width: 768px) {
-    .hamburger {
-        display: flex;
-    }
-
-    .nav-menu {
-        position: fixed;
-        top: 0;
-        right: -100%; /* Esconde fora da tela */
-        width: 100%;
-        height: 100vh;
-        background: var(--bg-color);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: right 0.4s ease-in-out;
-    }
-
-    .nav-menu.active {
-        right: 0;
-    }
-
-    .nav-links {
-        flex-direction: column;
-        align-items: center;
-        gap: 3rem;
-    }
-
-    .nav-link {
-        font-size: 1.5rem;
-    }
-
-    /* Animação do Hamburger para "X" */
-    .hamburger.active .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-    }
-    .hamburger.active .bar:nth-child(2) {
-        opacity: 0;
-    }
-    .hamburger.active .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-    }
-
-    .hero {
-        flex-direction: column-reverse;
-        text-align: center;
-        padding-top: 120px;
-    }
-
-    .hero-buttons {
-        justify-content: center;
-    }
-
-    .name {
-        font-size: 2.5rem;
-    }
-    
-    .description {
-        margin: 0 auto 2rem;
-    }
-}
-
-/* =========================================================================
    GALERIA (Gallery Sections)
    ========================================================================= */
 .gallery {
     padding: 100px 0;
-    min-height: 100vh;
+    min-height: auto;
 }
 
 .gallery-header {
@@ -629,6 +570,7 @@ footer .small {
     margin-bottom: 1.5rem;
     transition: all 0.3s ease;
     font-family: 'Oswald', sans-serif;
+    cursor: pointer;
 }
 
 .btn-back:hover {
@@ -670,7 +612,7 @@ footer .small {
 /* =========================================================================
    LIGHTBOX (Visualizador de Imagens com Zoom)
    ========================================================================= */
-   .lightbox-modal {
+.lightbox-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -681,12 +623,12 @@ footer .small {
     z-index: 10000;
     justify-content: center;
     align-items: center;
-    pointer-events: none; /* FIX: Não captura eventos do mouse */
+    pointer-events: none;
 }
 
 .lightbox-modal.active {
     display: flex;
-    pointer-events: auto; /* Apenas quando ativo */
+    pointer-events: auto;
 }
 
 .lightbox-container {
@@ -698,7 +640,7 @@ footer .small {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    pointer-events: auto; /* Container aceita eventos */
+    pointer-events: auto;
 }
 
 .lightbox-image {
@@ -707,8 +649,8 @@ footer .small {
     object-fit: contain;
     border-radius: 8px;
     transition: transform 0.2s ease;
-    cursor: grab; /* Muda cursor para indicar que pode fazer zoom */
-    pointer-events: auto; /* Imagem aceita eventos */
+    cursor: grab;
+    pointer-events: auto;
 }
 
 .lightbox-image:active {
@@ -732,8 +674,8 @@ footer .small {
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: auto; /* Botões aceitam cliques */
-    z-index: 10001; /* Fica acima da imagem */
+    pointer-events: auto;
+    z-index: 10001;
 }
 
 .lightbox-close:hover,
@@ -767,7 +709,7 @@ footer .small {
     cursor: not-allowed;
     border-color: var(--text-muted);
     color: var(--text-muted);
-    pointer-events: none; /* Não clica quando desabilitado */
+    pointer-events: none;
 }
 
 .lightbox-prev:disabled:hover,
@@ -783,9 +725,10 @@ footer .small {
     margin-top: 2rem;
     align-items: center;
     justify-content: center;
-    pointer-events: auto; /* Controles aceitam eventos */
+    pointer-events: auto;
     position: relative;
     z-index: 10001;
+    flex-wrap: wrap;
 }
 
 .lightbox-zoom-in,
@@ -815,14 +758,392 @@ footer .small {
     font-weight: 600;
     margin-left: 1rem;
     font-family: 'Oswald', sans-serif;
-    pointer-events: none; /* Apenas para leitura */
+    pointer-events: none;
 }
 
-/* Responsividade Mobile */
+/* =========================================================================
+   CHARACTER PRESENTATION (Apresentação do Personagem)
+   ========================================================================= */
+.character-presentation {
+    padding: 60px 0;
+    min-height: auto;
+}
+
+.character-title {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.character-title span {
+    color: var(--accent-primary);
+    text-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+}
+
+.character-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-bottom: 4rem;
+}
+
+/* Descrição do Personagem */
+.character-description {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.character-description p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-main);
+    text-align: justify;
+}
+
+.character-description p:first-child {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Visual do Personagem */
+.character-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.character-img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    border: 2px solid var(--accent-primary);
+    box-shadow: var(--shadow-aura);
+    animation: float 6s ease-in-out infinite;
+    filter: grayscale(10%) contrast(110%);
+}
+
+/* Player de Música */
+.music-player {
+    width: 100%;
+    max-width: 400px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.music-title {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.music-player audio {
+    width: 100%;
+    height: 50px;
+    border-radius: 8px;
+}
+
+.music-player audio::-webkit-media-controls-panel {
+    background-color: rgba(139, 0, 0, 0.1);
+}
+
+.music-player audio::-webkit-media-controls-current-time-display,
+.music-player audio::-webkit-media-controls-time-remaining-display {
+    color: var(--accent-primary);
+}
+
+/* =========================================================================
+   SLASHES DO SUKUNA (Animações de Corte)
+   ========================================================================= */
+.sukuna-slash {
+    position: fixed;
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--accent-primary);
+    pointer-events: none;
+    z-index: 100;
+    text-shadow: 0 0 15px rgba(139, 0, 0, 0.8);
+    animation: slashAppear 0.6s ease-out forwards;
+}
+
+@keyframes slashAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(15deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.sukuna-slash.vibrate {
+    animation: slashVibrate 0.4s ease-out forwards;
+}
+
+@keyframes slashVibrate {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(0deg);
+    }
+    40% {
+        opacity: 1;
+        transform: scale(1.2) rotate(-5deg);
+    }
+    60% {
+        transform: scale(1.1) rotate(5deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* =========================================================================
+   MEDIA QUERIES (Responsividade Mobile)
+   ========================================================================= */
+@media (max-width: 1024px) {
+    .character-title {
+        font-size: 2.8rem;
+    }
+
+    .character-content {
+        gap: 2rem;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .nav-links {
+        gap: 1.5rem;
+    }
+
+    .nav-link {
+        font-size: 0.8rem;
+    }
+}
+
 @media (max-width: 768px) {
-    .lightbox-container {
+    /* Header Mobile */
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
         width: 100%;
-        padding: 0 1rem;
+        height: 100vh;
+        background: var(--bg-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: right 0.4s ease-in-out;
+        z-index: 999;
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 3rem;
+    }
+
+    .nav-link {
+        font-size: 1.5rem;
+    }
+
+    .nav-container {
+        padding: 1rem 1.5rem;
+    }
+
+    .logo {
+        font-size: 1rem;
+    }
+
+    /* Animação do Hamburger para "X" */
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Hero Section Mobile */
+    .hero {
+        flex-direction: column-reverse;
+        text-align: center;
+        padding-top: 80px;
+        min-height: auto;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .name {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .greeting {
+        font-size: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        height: auto;
+    }
+
+    .description {
+        font-size: 1rem;
+        margin: 0 auto 1.5rem;
+        max-width: 100%;
+    }
+
+    .profile-img {
+        max-width: 300px;
+    }
+
+    /* Seções Mobile */
+    section {
+        padding: 60px 0;
+        min-height: auto;
+    }
+
+    main {
+        padding: 0 1.5rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Projetos Mobile */
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .project-img-container {
+        height: 200px;
+    }
+
+    .project-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .project-info p {
+        font-size: 0.9rem;
+    }
+
+    /* Skills Mobile */
+    .skills-container {
+        max-width: 100%;
+    }
+
+    .skill-item {
+        margin-bottom: 1.2rem;
+    }
+
+    /* Character Presentation Mobile */
+    .character-presentation {
+        padding: 40px 0;
+    }
+
+    .character-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .character-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .character-description {
+        gap: 1rem;
+    }
+
+    .character-description p {
+        font-size: 1rem;
+        text-align: left;
+        line-height: 1.6;
+    }
+
+    .character-img {
+        max-width: 100%;
+    }
+
+    /* Galeria Mobile */
+    .gallery {
+        padding: 60px 0;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .gallery-item {
+        margin-bottom: 0;
+    }
+
+    .gallery-img {
+        height: 250px;
+    }
+
+    .gallery-header {
+        margin-bottom: 2rem;
+    }
+
+    /* Botões Mobile */
+    .btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .social-btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+        min-width: 120px;
+    }
+
+    .social-links {
+        gap: 1rem;
+    }
+
+    /* Lightbox Mobile */
+    .lightbox-container {
+        width: 95%;
+        height: auto;
+        max-height: 85vh;
     }
 
     .lightbox-close,
@@ -844,6 +1165,7 @@ footer .small {
     .lightbox-controls {
         flex-wrap: wrap;
         gap: 0.5rem;
+        margin-top: 1.5rem;
     }
 
     .lightbox-zoom-in,
@@ -855,8 +1177,125 @@ footer .small {
 
     .lightbox-counter {
         margin-left: 0;
-        margin-top: 0.5rem;
         width: 100%;
         text-align: center;
+        margin-top: 0.5rem;
     }
+
+    /* Footer Mobile */
+    footer {
+        padding: 1.5rem 1rem;
+    }
+
+    footer p {
+        font-size: 0.9rem;
+    }
+
+    /* Slashes do Sukuna - Menos frequentes em mobile */
+    .sukuna-slash {
+        font-size: 2.5rem;
+    }
+
+    .btn-back {
+        font-size: 0.9rem;
+    }
+
+    .tech-tags span {
+        font-size: 0.75rem;
+        padding: 1px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        padding: 1rem;
+    }
+
+    .logo {
+        font-size: 0.9rem;
+    }
+
+    .name {
+        font-size: 2rem;
+    }
+
+    .greeting {
+        font-size: 0.9rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .description {
+        font-size: 0.95rem;
+    }
+
+    .profile-img {
+        max-width: 250px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .character-title {
+        font-size: 1.8rem;
+    }
+
+    .character-description p {
+        font-size: 0.95rem;
+    }
+
+    .project-info h3 {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    .social-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        min-width: 100px;
+    }
+
+    .sukuna-slash {
+        font-size: 2rem;
+    }
+
+    .hero {
+        padding-top: 70px;
+    }
+
+    .cursor-dot,
+    .cursor-trail {
+        display: none;
+    }
+}
+
+/* =========================================================================
+   HEADER ANIMADO
+========================================================================= */
+
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    transition: transform 0.4s ease;
+}
+
+#header.header-hidden {
+    transform: translateY(-120%);
+}
+
+/* Força o mouse nativo a desaparecer de todos os botões e links 
+   quando o cursor de energia estiver ativo */
+   body.custom-cursor-active * {
+    cursor: none !important;
 }
