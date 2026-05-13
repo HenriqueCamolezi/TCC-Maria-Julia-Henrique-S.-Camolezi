@@ -1299,3 +1299,156 @@ footer .small {
    body.custom-cursor-active * {
     cursor: none !important;
 }
+
+/* =========================================================================
+   SUKUNA SLASHES - BACKGROUND FX
+========================================================================= */
+
+.sukuna-slash {
+    position: fixed;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+
+    opacity: 0;
+
+    animation: sukunaSlash linear forwards;
+}
+
+/* Animação dinâmica */
+@keyframes sukunaSlash {
+
+    0% {
+        opacity: 0;
+        transform:
+            translateY(20px)
+            scale(0.5)
+            rotate(0deg);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translateY(-120px)
+            scale(1.6)
+            rotate(25deg);
+    }
+}
+
+/* =========================================================================
+   BOTÃO DE MÚSICA
+========================================================================= */
+.music-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 55px;
+    height: 55px;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .music-btn {
+    background: rgba(0, 0, 0, 0.08);
+    color: black;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.music-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Animação quando a música estiver tocando */
+.music-btn.active {
+    animation: musicPulse 1.5s infinite;
+}
+
+@keyframes musicPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* =========================================================================
+   CRÉDITOS E AGRADECIMENTOS
+   ========================================================================= */
+   .creditos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.credito-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.credito-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-aura);
+}
+
+.credito-card h3 {
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.credito-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.credito-card strong {
+    color: var(--text-main);
+}
+
+/* =========================================================================
+   FRASE DOS PERSONAGENS
+   ========================================================================= */
+   .character-quote {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--accent-primary);
+    text-align: center;
+    max-width: 400px;
+    margin-top: -15px; /* Aproxima a frase um pouco mais da foto */
+    font-weight: 600;
+    line-height: 1.5;
+    text-shadow: 0 0 10px rgba(139, 0, 0, 0.2);
+}
+
+[data-theme="light"] .character-quote {
+    text-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+}
+
+[data-theme="light"] .music-player audio::-webkit-media-controls-panel {
+    background-color: rgba(0, 191, 255, 0.1);
+}

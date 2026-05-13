@@ -108,7 +108,7 @@ if (isTouchDevice()) {
 }
 
 // 3. EFEITO DE DIGITAÇÃO (Typing Effect para a Seção Hero)
-const wordsToType = ["Desenhista", "Feiticeiro de Grau Especial"];
+const wordsToType = ["Desenhista", "Programador", "Feiticeiro de Grau Especial"];
 let wordIndex = 0;
 let charIndex = 0;
 let isDeleting = false;
@@ -221,91 +221,69 @@ window.addEventListener('scroll', () => {
 });
 
 // =========================================================================
-// SLASHES DO SUKUNA (Animações de Corte com Detecção de Device)
+// SLASHES DO SUKUNA - NOVA VERSÃO DINÂMICA
 // =========================================================================
 
 function createSlash() {
-    const slashChars = ['/'];
-    const randomSlash = slashChars[Math.floor(Math.random() * slashChars.length)];
-    
+
     const slash = document.createElement('div');
     slash.className = 'sukuna-slash';
-    slash.textContent = randomSlash;
-    
-    const randomX = Math.random() * window.innerWidth;
-    const randomY = Math.random() * window.innerHeight;
-    
-    slash.style.left = `${randomX}px`;
-    slash.style.top = `${randomY}px`;
-    
-    // 50% de chance de vibrar
-    if (Math.random() > 0.5) {
-        slash.classList.add('vibrate');
+
+    // Escolhe slash aleatório
+    const slashes = ['/', '//', '╱', '⟋'];
+    slash.textContent = slashes[Math.floor(Math.random() * slashes.length)];
+
+    // Posição aleatória
+    slash.style.left = Math.random() * window.innerWidth + 'px';
+    slash.style.top = Math.random() * window.innerHeight + 'px';
+
+    // Rotação aleatória
+    const rotation = Math.random() * 360;
+    slash.style.transform = `rotate(${rotation}deg)`;
+
+    // Tamanho aleatório
+    const size = Math.random() * 30 + 20;
+    slash.style.fontSize = `${size}px`;
+
+    // Velocidade aleatória
+    const duration = Math.random() * 300 + 200;
+    slash.style.animationDuration = `${duration}ms`;
+
+    // Cor baseada no tema
+    const currentTheme = document.body.getAttribute('data-theme');
+
+    if (currentTheme === 'dark') {
+        slash.style.color = 'rgba(255,255,255,0.35)';
+        slash.style.textShadow = '0 0 10px rgba(255,255,255,0.5)';
+    } else {
+        slash.style.color = 'rgb(0, 0, 0)';
+        slash.style.textShadow = '0 0 12px rgb(0, 0, 0)';
     }
-    
+
     document.body.appendChild(slash);
-    
-    // Remove o slash após a animação
+
+    // Remove rapidamente
     setTimeout(() => {
         slash.remove();
-    }, 600);
+    }, duration);
 }
 
-// Gera slashes periodicamente (menos frequentes em mobile)
+// Criação contínua mais rápida
 function initSlashAnimation() {
-    const isMobile = window.innerWidth <= 768;
-    const interval = isMobile ? 5000 : 3000; // 5s em mobile, 3s em desktop
-    
+
     setInterval(() => {
-        // 70% de chance de criar um slash
-        if (Math.random() > 0.3) {
+
+        // Quantidade dinâmica
+        const amount = window.innerWidth <= 768 ? 2 : 4;
+
+        for (let i = 0; i < amount; i++) {
             createSlash();
         }
-    }, interval);
+
+    }, 250);
 }
 
-// Gera slashes ao fazer scroll (menos frequente em mobile)
-window.addEventListener('scroll', () => {
-    const isMobile = window.innerWidth <= 768;
-    const chance = isMobile ? 0.05 : 0.1; // 5% em mobile, 10% em desktop
-    
-    if (Math.random() < chance) {
-        createSlash();
-    }
-});
-
-// Gera slashes ao clicar (compatível com touch)
-document.addEventListener('click', (e) => {
-    const isMobile = window.innerWidth <= 768;
-    const chance = isMobile ? 0.15 : 0.3; // 15% em mobile, 30% em desktop
-    
-    if (Math.random() < chance) {
-        // Cria 1-2 slashes perto do clique
-        const numSlashes = isMobile ? 1 : (Math.random() > 0.5 ? 1 : 2);
-        
-        for (let i = 0; i < numSlashes; i++) {
-            setTimeout(() => {
-                const offsetX = (Math.random() - 0.5) * 150;
-                const offsetY = (Math.random() - 0.5) * 150;
-                
-                const slash = document.createElement('div');
-                slash.className = 'sukuna-slash';
-                slash.textContent = Math.random() > 0.5 ? '/' : '';
-                
-                slash.style.left = `${e.clientX + offsetX}px`;
-                slash.style.top = `${e.clientY + offsetY}px`;
-                
-                document.body.appendChild(slash);
-                
-                setTimeout(() => {
-                    slash.remove();
-                }, 600);
-            }, i * 100);
-        }
-    }
-});
-
-// Inicializa slashes periódicos quando o DOM estiver pronto
+// Inicialização
 document.addEventListener('DOMContentLoaded', initSlashAnimation);
 
 // =========================================================================
@@ -315,5 +293,130 @@ window.addEventListener('resize', () => {
     // Reposiciona elementos se necessário
     if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
         toggleMenu();
+    }
+});
+
+// =========================================================================
+// COMANDO DE RETROCEDER COM ESC + BOTÃO VOLTAR DO MOBILE
+// =========================================================================
+
+// Voltar usando a tecla ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        // Se estiver em uma página de galeria, volta para index
+        if (
+            window.location.pathname.includes('galeria-gojo.html') ||
+            window.location.pathname.includes('galeria-geto.html')
+        ) {
+            window.location.href = 'index.html#projetos';
+        }
+    }
+});
+
+// =========================================================================
+// BOTÃO VOLTAR DO CELULAR (ANDROID / MOBILE)
+// =========================================================================
+
+// Cria um histórico falso para detectar o botão voltar
+history.pushState({ page: 1 }, "", "");
+
+// Detecta quando o usuário aperta o botão voltar do dispositivo
+window.addEventListener('popstate', () => {
+
+    // Se estiver em páginas da galeria → volta para a home
+    if (
+        window.location.pathname.includes('galeria-gojo.html') ||
+        window.location.pathname.includes('galeria-geto.html')
+    ) {
+        window.location.href = 'index.html#projetos';
+    } else {
+        // Se já estiver na home, mantém no site
+        history.pushState({ page: 1 }, "", "");
+    }
+});
+
+// =========================================================================
+// MÚSICA DE BACKGROUND
+// =========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const bgMusic = document.getElementById('bg-music');
+    const musicToggle = document.getElementById('music-toggle');
+
+    // Se não encontrar o áudio na página, interrompe para não dar erro
+    if (!bgMusic) return;
+
+    bgMusic.volume = 0.02; // Define o volume (2%)
+    
+    // 1. Restaura o tempo da música salvo no navegador
+    const savedTime = localStorage.getItem('music-time');
+    if (savedTime) {
+        const time = parseFloat(savedTime);
+        if (!isNaN(time)) {
+            bgMusic.currentTime = time;
+        }
+    }
+    
+    // 2. Salva continuamente o progresso da música
+    bgMusic.addEventListener('timeupdate', () => {
+        localStorage.setItem('music-time', bgMusic.currentTime);
+    });
+
+    // Por padrão a música é habilitada, a não ser que o usuário a tenha pausado
+    let musicEnabled = localStorage.getItem('music-playing') !== 'false';
+
+    // Função para tocar a música
+    async function playMusic() {
+        try {
+            await bgMusic.play();
+            musicEnabled = true;
+            localStorage.setItem('music-playing', 'true');
+            if (musicToggle) musicToggle.classList.add('active');
+        } catch (err) {
+            console.log('Autoplay bloqueado pelo navegador, aguardando interação do usuário.');
+            if (musicToggle) musicToggle.classList.remove('active');
+        }
+    }
+
+    // Função para pausar a música
+    function pauseMusic() {
+        bgMusic.pause();
+        musicEnabled = false;
+        localStorage.setItem('music-playing', 'false');
+        if (musicToggle) musicToggle.classList.remove('active');
+    }
+
+    // Tenta tocar a música na primeira interação na tela
+    function initMusic() {
+        if (musicEnabled) {
+            playMusic();
+        }
+        // Remove os eventos após a primeira interação
+        document.removeEventListener('click', initMusic);
+        document.removeEventListener('touchstart', initMusic);
+        document.removeEventListener('keydown', initMusic);
+    }
+
+    // Logo ao carregar, tenta tocar a música
+    if (musicEnabled) {
+        playMusic();
+    } else {
+        if (musicToggle) musicToggle.classList.remove('active');
+    }
+
+    // Escuta a primeira interação na tela inteira
+    document.addEventListener('click', initMusic);
+    document.addEventListener('touchstart', initMusic);
+    document.addEventListener('keydown', initMusic);
+
+    // Lógica do botão de Tocar/Pausar
+    if (musicToggle) {
+        musicToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita conflito com o clique da tela
+            if (bgMusic.paused) {
+                playMusic();
+            } else {
+                pauseMusic();
+            }
+        });
     }
 });

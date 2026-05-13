@@ -18,7 +18,7 @@
 
     <header id="header">
         <div class="nav-container">
-            <a href="index.html" class="logo">Maria Julia & Henrique Camolezi</a>
+            <a href="index.html" class="logo">Galeria de Artes</a>
             
             <nav class="nav-menu">
                 <ul class="nav-links">
@@ -26,6 +26,7 @@
                     <li><a href="index.html#projetos" class="nav-link">Artes</a></li>
                     <li><a href="index.html#habilidades" class="nav-link">Técnicas</a></li>
                     <li><a href="index.html#contato" class="nav-link">Pacto</a></li>
+                    <li><a href="#creditos" class="nav-link">Créditos</a></li>
                 </ul>
             </nav>
 
@@ -58,11 +59,21 @@
                         ele é capaz de dominar múltiplos espíritos de graus variados simultaneamente.
                 </div>
 
-                <!-- Visual e Música -->
+                <!-- Visual e Frase -->
                 <div class="character-visual">
                     <img src="Suguru Getou.jpg" alt="Suguru Geto" class="character-img">
+                    
+                    <p class="character-quote">"Você é o mais forte porque é Satoru Gojo, ou é Satoru Gojo porque é o mais forte?"</p>
+                    
+                    <div class="music-player">
+                        <span class="music-title">Ouvir Voz</span>
+                        <audio controls id="voice-audio">
+                            <!-- Coloque o nome do arquivo de áudio do Geto no src abaixo -->
+                            <source src="Frase do Suguro Getou.mp3" type="audio/mpeg">
+                            Seu navegador não suporta áudio.
+                        </audio>
+                    </div>
                 </div>
-            </div>
         </section>
 
         <!-- SEÇÃO DE GALERIA -->
@@ -91,7 +102,21 @@
         <p class="small">© Galeria de Artes 2026 - Maria Julia & Henrique.</p>
     </footer>
 
-    <script src="script.js"></script>
     <script src="lightbox.js"></script>
+
+<!-- =========================================================================
+     MÚSICA DE BACKGROUND
+========================================================================= -->
+<!-- A tag 'loop' garante que a música repita infinitamente -->
+<audio id="bg-music" loop>
+    <source src="more than words.mp3" type="audio/mpeg">
+</audio>
+
+<button id="music-toggle" class="music-btn" aria-label="Tocar/Pausar Música">
+    ♪
+</button>
+
+<script src="script.js"></script>
+
 </body>
 </html>

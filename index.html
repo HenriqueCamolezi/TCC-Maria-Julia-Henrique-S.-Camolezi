@@ -18,7 +18,7 @@
 
     <header id="header">
         <div class="nav-container">
-            <a href="#inicio" class="logo">Galeria de Desenhos</a>
+            <a href="#inicio" class="logo">Galeria de Artes Jujutsu</a>
             
             <nav class="nav-menu">
                 <ul class="nav-links">
@@ -26,6 +26,7 @@
                     <li><a href="#projetos" class="nav-link">Artes</a></li>
                     <li><a href="#habilidades" class="nav-link">Técnicas</a></li>
                     <li><a href="#contato" class="nav-link">Pacto</a></li>
+                    <li><a href="#creditos" class="nav-link">Créditos</a></li>
                 </ul>
             </nav>
 
@@ -44,7 +45,7 @@
         <section id="inicio" class="hero section-hidden">
             <div class="hero-content">
                 <h2 class="greeting">Expansão de Domínio: Galeria Absoluta</h2>
-                <h1 class="name">Olá, eu sou <span>Maria Julia</span> & <span>Henrique Camolezi</span></h1>
+                <h1 class="name">Olá, somos <span>Maria Julia</span> & <span>Henrique Camolezi</span></h1>
                 <p class="subtitle">Nós somos <span id="typist"></span><span class="cursor-blink">|</span></p>
                 <p class="description">Artes desenhadas com energia amaldiçoada absoluta.</p>
                 
@@ -98,7 +99,7 @@
             
             <div class="skills-container">
                 <div class="skills-category">
-                    <h3>Domínio de Artes</h3>
+                    <h3>Domínio de Artes (Maria Julia)</h3>
                     
                     <div class="skill-item">
                         <div class="skill-info">
@@ -125,20 +126,59 @@
 
         <section id="contato" class="contact section-hidden">
             <h2 class="section-title">Pacto de <span>Vínculo</span></h2>
-            
+            <h2 class="Descrição">Pacto com <span>Maria Julia</span> para Desenhos</h2>
             <div class="social-links">
                 <a href="https://github.com/hannavalentine" class="social-btn">GitHub</a>
                 <a href="https://wa.me/+5516999945269" class="social-btn">WhatsApp</a>
                 <a href="mailto:mariajuliavallenterosada@gmail.com" class="social-btn">E-mail</a>
+            </div>
+            <h2 class="Descrição">Pacto com <span>Henrique Camolezi</span> para programação</h2>
+            <div class="social-links">
+                <a href="https://github.com/HenriqueCamolezi" class="social-btn">GitHub</a>
+                <a href="https://wa.me/+5516988112105" class="social-btn">WhatsApp</a>
+                <a href="mailto:maxextreme121@gmail.com" class="social-btn">E-mail</a>
+        </section>
+
+        <section id="creditos" class="creditos section-hidden">
+            <h2 class="section-title">Créditos e <span>Agradecimentos</span></h2>
+            
+            <div class="creditos-container">
+                <div class="credito-card">
+                    <h3>Inspiração Original</h3>
+                    <p>Toda a temática visual, termos e referências são inspiradas na obra <strong>Jujutsu Kaisen</strong>, criada pelo mangaká <strong>Gege Akutami</strong>.</p>
+                </div>
+
+                <div class="credito-card">
+                    <h3>Desenvolvimento</h3>
+                    <p>Desenhos da galeria produzidos por <strong>Maria Julia</strong>, codificação e programação do site produzida por <strong>Henrique Camolezi</strong>.</p>
+                </div>
+
+                <div class="credito-card">
+                    <h3>Recursos Visuais</h3>
+                    <p>Fontes fornecidas pelo Google Fonts (Inter e Oswald). Efeitos de domínio, cursores e animações criados via CSS e JavaScript puro.</p>
+                </div>
             </div>
         </section>
     </main>
 
     <footer>
         <p>Desenvolvido com Energia Absoluta por <strong>Maria Julia</strong> &</p><strong>Henrique Camolezi</strong>
-        <p class="small">© Galeria de Artes 2026 - Maria Julia & Henrique.</p>
+        <p class="small">© Galeria de Artes Jujutsu 2026 - Maria Julia & Henrique.</p>
     </footer>
+    
+<!-- =========================================================================
+     MÚSICA DE BACKGROUND
+========================================================================= -->
+<!-- A tag 'loop' garante que a música repita infinitamente -->
+<audio id="bg-music" loop>
+    <source src="more than words.mp3" type="audio/mpeg">
+</audio>
 
-    <script src="script.js"></script>
+<button id="music-toggle" class="music-btn" aria-label="Tocar/Pausar Música">
+    ♪
+</button>
+
+<script src="script.js"></script>
+
 </body>
 </html>
