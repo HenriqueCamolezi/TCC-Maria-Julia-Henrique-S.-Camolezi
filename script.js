@@ -221,70 +221,100 @@ window.addEventListener('scroll', () => {
 });
 
 // =========================================================================
-// SLASHES DO SUKUNA - NOVA VERSÃO DINÂMICA
+// EFEITOS DE DOMÍNIO (Sukuna Slashes e Gojo Particles)
 // =========================================================================
 
+// Função 1: Cortes do Sukuna (Tema Escuro)
 function createSlash() {
-
     const slash = document.createElement('div');
     slash.className = 'sukuna-slash';
 
-    // Escolhe slash aleatório
     const slashes = ['/', '//', '╱', '⟋'];
     slash.textContent = slashes[Math.floor(Math.random() * slashes.length)];
 
-    // Posição aleatória
     slash.style.left = Math.random() * window.innerWidth + 'px';
     slash.style.top = Math.random() * window.innerHeight + 'px';
 
-    // Rotação aleatória
     const rotation = Math.random() * 360;
     slash.style.transform = `rotate(${rotation}deg)`;
 
-    // Tamanho aleatório
     const size = Math.random() * 30 + 20;
     slash.style.fontSize = `${size}px`;
 
-    // Velocidade aleatória
     const duration = Math.random() * 300 + 200;
     slash.style.animationDuration = `${duration}ms`;
 
-    // Cor baseada no tema
-    const currentTheme = document.body.getAttribute('data-theme');
-
-    if (currentTheme === 'dark') {
-        slash.style.color = 'rgba(255,255,255,0.35)';
-        slash.style.textShadow = '0 0 10px rgba(255,255,255,0.5)';
-    } else {
-        slash.style.color = 'rgb(0, 0, 0)';
-        slash.style.textShadow = '0 0 12px rgb(0, 0, 0)';
-    }
+    slash.style.color = 'rgba(255,255,255,0.35)';
+    slash.style.textShadow = '0 0 10px rgba(255,255,255,0.5)';
 
     document.body.appendChild(slash);
 
-    // Remove rapidamente
     setTimeout(() => {
         slash.remove();
     }, duration);
 }
 
-// Criação contínua mais rápida
-function initSlashAnimation() {
+// Função 2: Vazio Infinito do Gojo (Tema Claro)
+function createGojoParticle() {
+    const particle = document.createElement('div');
+    particle.className = 'gojo-particle';
 
+    // Tamanho aleatório (entre 10px e 30px)
+    const size = Math.random() * 20 + 10;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+
+    // Posição aleatória na tela
+    particle.style.left = Math.random() * window.innerWidth + 'px';
+    particle.style.top = Math.random() * window.innerHeight + 'px';
+
+    // Cores das Técnicas: Azul, Vermelho e Roxo
+    const colors = [
+        '#00bfff', // Azul (Lapse)
+        '#ff003c', // Vermelho (Reversal)
+        '#8a2be2'  // Roxo (Hollow)
+    ];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.background = color;
+    
+    // Brilho da partícula
+    particle.style.boxShadow = `0 0 ${size}px ${color}, 0 0 ${size * 2}px ${color}`;
+
+    // Direção aleatória de movimento gerada dinamicamente
+    const tx = (Math.random() - 0.5) * 200; // Movimento no eixo X (-100 a 100)
+    const ty = (Math.random() - 0.5) * 200 - 100; // Movimento no eixo Y (tendência a subir)
+    particle.style.setProperty('--tx', `${tx}px`);
+    particle.style.setProperty('--ty', `${ty}px`);
+
+    // Duração (flutua entre 2 e 5 segundos)
+    const duration = Math.random() * 3000 + 2000;
+    particle.style.animationDuration = `${duration}ms`;
+
+    document.body.appendChild(particle);
+
+    setTimeout(() => {
+        particle.remove();
+    }, duration);
+}
+
+// Controlador Principal de Efeitos
+function initBackgroundEffects() {
     setInterval(() => {
-
-        // Quantidade dinâmica
-        const amount = window.innerWidth <= 768 ? 2 : 4;
+        const currentTheme = document.body.getAttribute('data-theme');
+        const amount = window.innerWidth <= 768 ? 2 : 4; // Menos partículas no celular
 
         for (let i = 0; i < amount; i++) {
-            createSlash();
+            if (currentTheme === 'dark') {
+                createSlash(); // Invoca cortes se for Sukuna
+            } else {
+                createGojoParticle(); // Invoca esferas se for Gojo
+            }
         }
-
     }, 250);
 }
 
-// Inicialização
-document.addEventListener('DOMContentLoaded', initSlashAnimation);
+// Inicialização dos Efeitos
+document.addEventListener('DOMContentLoaded', initBackgroundEffects);
 
 // =========================================================================
 // RESIZE LISTENER PARA AJUSTES EM TEMPO REAL

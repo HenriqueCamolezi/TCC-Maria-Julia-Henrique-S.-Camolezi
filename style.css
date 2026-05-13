@@ -1452,3 +1452,34 @@ footer .small {
 [data-theme="light"] .music-player audio::-webkit-media-controls-panel {
     background-color: rgba(0, 191, 255, 0.1);
 }
+
+/* =========================================================================
+   GOJO PARTICLES - VAZIO INFINITO (Tema Claro FX)
+========================================================================= */
+.gojo-particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1; /* <- Coloca as esferas lá no fundo, atrás de todo o conteúdo */
+    filter: blur(2px); 
+    animation: floatParticle linear forwards;
+    opacity: 0;
+}
+
+@keyframes floatParticle {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.5);
+    }
+    20% {
+        opacity: 0.9;
+    }
+    80% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+        /* var(--tx) e var(--ty) são gerados no JavaScript */
+        transform: translate(var(--tx), var(--ty)) scale(1.5); 
+    }
+}
