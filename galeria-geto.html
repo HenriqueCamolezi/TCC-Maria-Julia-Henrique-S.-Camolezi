@@ -118,5 +118,23 @@
 
 <script src="script.js"></script>
 
+<script>
+    // Se o usuário der play no áudio da voz, pausa a música de fundo!
+    const voiceAudio = document.getElementById('voice-audio');
+    
+    if(voiceAudio) {
+        voiceAudio.addEventListener('play', () => {
+            const bgMusic = document.getElementById('bg-music');
+            const musicToggle = document.getElementById('music-toggle');
+            
+            if(bgMusic && !bgMusic.paused) {
+                bgMusic.pause(); // Pausa a música
+                if(musicToggle) musicToggle.classList.remove('active'); // Para a animação do botão musical
+                localStorage.setItem('music-playing', 'false');
+            }
+        });
+    }
+</script>
+
 </body>
 </html>

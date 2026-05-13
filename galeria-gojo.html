@@ -67,7 +67,7 @@
                     <div class="music-player">
                         <span class="music-title">Ouvir Voz</span>
                         <audio controls id="voice-audio">
-                            <source src="gojo-voz.mp3" type="audio/mpeg">
+                            <source src="Entre o céu e a terra, sou o mais honrado.mp3" type="audio/mpeg">
                             Seu navegador não suporta áudio.
                         </audio>
                     </div>
@@ -115,6 +115,24 @@
 </button>
 
 <script src="script.js"></script>
+
+<script>
+    // Se o usuário der play no áudio da voz, pausa a música de fundo!
+    const voiceAudio = document.getElementById('voice-audio');
+    
+    if(voiceAudio) {
+        voiceAudio.addEventListener('play', () => {
+            const bgMusic = document.getElementById('bg-music');
+            const musicToggle = document.getElementById('music-toggle');
+            
+            if(bgMusic && !bgMusic.paused) {
+                bgMusic.pause(); // Pausa a música
+                if(musicToggle) musicToggle.classList.remove('active'); // Para a animação do botão musical
+                localStorage.setItem('music-playing', 'false');
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
