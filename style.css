@@ -1483,3 +1483,253 @@ footer .small {
         transform: translate(var(--tx), var(--ty)) scale(1.5); 
     }
 }
+
+/* =========================================================================
+   EASTER EGG UI (Botão Secreto e Janela de Código)
+========================================================================= */
+.secret-btn {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.secret-btn:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-aura);
+}
+
+/* Fundo escuro que cobre a tela */
+.secret-modal {
+    display: none; 
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+}
+
+.secret-modal.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Caixinha central */
+.secret-content {
+    background: var(--bg-color);
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--accent-primary);
+    box-shadow: var(--shadow-aura);
+    text-align: center;
+    position: relative;
+    width: 90%;
+    max-width: 350px;
+}
+
+.secret-content h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--accent-primary);
+}
+
+.secret-input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    border-radius: 6px;
+    font-family: 'Oswald', sans-serif;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.secret-input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px rgba(139,0,0,0.3);
+}
+
+.secret-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.secret-close:hover { color: var(--accent-primary); }
+
+.secret-error {
+    color: #ff3333;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: none;
+    margin-top: -5px;
+    margin-bottom: 15px;
+}
+
+/* =========================================================================
+   EASTER EGG: EXPANSÃO DE DOMÍNIO SUKUNA
+========================================================================= */
+/* Quando o modo Sukuna for ativado, ele força essas variáveis de cor */
+body.sukuna-domain-active {
+    --bg-color: #050000;
+    --text-main: #ffb3b3;
+    --accent-primary: #ff0000; /* Vermelho puro e brilhante */
+    --accent-secondary: #500000;
+    --glass-bg: rgba(30, 0, 0, 0.8);
+    --glass-border: rgba(255, 0, 0, 0.5);
+    --shadow-aura: 0 0 30px rgba(255, 0, 0, 0.6);
+    
+    /* Animação de impacto inicial */
+    animation: domainShockwave 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Deixa as imagens com um tom amaldiçoado avermelhado */
+body.sukuna-domain-active img {
+    filter: grayscale(20%) sepia(30%) hue-rotate(-50deg) saturate(200%) contrast(120%);
+    transition: filter 1s ease;
+}
+
+/* Tremor de tela do impacto do Domínio */
+@keyframes domainShockwave {
+    0% { transform: translate(1px, 1px) rotate(0deg) scale(1); }
+    10% { transform: translate(-3px, -2px) rotate(-1deg) scale(1.02); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg) scale(1.01); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(0px, 0px) rotate(0deg) scale(1); }
+}
+
+/* =========================================================================
+   EASTER EGG: CAÇA AOS DEDOS DO SUKUNA (Estilos)
+========================================================================= */
+.sukuna-finger {
+    width: 25px;
+    height: 60px;
+    cursor: pointer;
+    z-index: 999;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    animation: fingerFloat 2.5s infinite alternate ease-in-out;
+}
+
+.sukuna-finger:hover {
+    transform: scale(1.2) rotate(15deg) !important;
+    filter: drop-shadow(0 0 15px #ff0000);
+}
+
+@keyframes fingerFloat {
+    0% { transform: translateY(0) rotate(-5deg); }
+    100% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Modal de Recompensas da Caçada */
+.reward-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 100000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+}
+
+.reward-modal.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.reward-content {
+    background: #0a0a0a;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    border: 2px solid #8b0000;
+    box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+    text-align: center;
+    position: relative;
+    width: 90%;
+    max-width: 450px;
+    color: #fff;
+}
+
+.reward-content h3 {
+    color: #ff3333;
+    margin-bottom: 1.5rem;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.6rem;
+    text-shadow: 0 0 10px rgba(255,0,0,0.5);
+}
+
+.reward-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ddd;
+}
+
+.reward-close {
+    position: absolute;
+    top: 15px; right: 20px;
+    background: none; border: none;
+    color: #aaa; font-size: 1.5rem;
+    cursor: pointer; transition: 0.3s;
+}
+
+.reward-close:hover {
+    color: #ff3333;
+}
+
+.secret-art-container {
+    margin-top: 1.5rem;
+}
+
+.secret-art-img {
+    width: 100%;
+    border-radius: 8px;
+    border: 2px solid #ff3333;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+    margin-bottom: 0.5rem;
+}
+
+.small-text {
+    font-size: 0.85rem !important;
+    color: #888 !important;
+    font-style: italic;
+}
