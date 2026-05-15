@@ -107,6 +107,24 @@ if (isTouchDevice()) {
     });
 }
 
+// ===== DETECTA PASSAGEM EM IMAGENS DA GALERIA/PROJETOS =====
+const viewables = document.querySelectorAll('.gallery-img');
+    
+viewables.forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        // Remove o efeito de clique comum (se tiver) e adiciona o de visualização
+        cursorTrail.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorDot.classList.add('view-mode');
+        cursorTrail.classList.add('view-mode');
+    });
+    
+    el.addEventListener('mouseleave', () => {
+        // Tira o modo de visualização quando o mouse sai da foto
+        cursorDot.classList.remove('view-mode');
+        cursorTrail.classList.remove('view-mode');
+    });
+});
+
 // 3. EFEITO DE DIGITAÇÃO (Typing Effect para a Seção Hero)
 const wordsToType = ["Desenhista", "Programador", "Feiticeiro de Grau Especial"];
 let wordIndex = 0;
@@ -587,6 +605,10 @@ let originalGreeting = "";
 let originalName = "";
 let rageInterval = null;
 
+// =========================================================================
+// EASTER EGG UI (Botão Secreto e Janela de Código)
+// =========================================================================
+
 const secretBtn = document.createElement('button');
 secretBtn.className = 'secret-btn';
 secretBtn.textContent = '?';
@@ -602,6 +624,11 @@ secretModal.innerHTML = `
         <input type="password" class="secret-input" placeholder="Digite o Pacto..." autocomplete="off">
         <div class="secret-error">Pacto Inválido. A energia dissipou.</div>
         <button class="btn btn-primary secret-submit">Invocar</button>
+        
+        <!-- NOVO BOTÃO DE RESETAR OS DEDOS -->
+        <button id="btn-reset-fingers" class="btn btn-outline" style="margin-top: 15px; width: 100%; border-color: #8b0000; color: #ff3333; padding: 10px; font-size: 0.9rem;">
+            ⟳ Resetar Dedos do Sukuna
+        </button>
     </div>
 `;
 document.body.appendChild(secretModal);
@@ -610,7 +637,9 @@ const inputField = secretModal.querySelector('.secret-input');
 const submitBtn = secretModal.querySelector('.secret-submit');
 const closeModBtn = secretModal.querySelector('.secret-close');
 const errorMsg = secretModal.querySelector('.secret-error');
+const resetFingersBtn = secretModal.querySelector('#btn-reset-fingers');
 
+// ISSO FAZ O BOTÃO "?" ABRIR A ABA (Se sumir, o botão para de funcionar)
 secretBtn.addEventListener('click', () => {
     secretModal.classList.add('active');
     inputField.value = ''; 
@@ -618,12 +647,37 @@ secretBtn.addEventListener('click', () => {
     inputField.focus(); 
 });
 
+// FECHAR A ABA DO PACTO
 function closeSecretModal() {
     secretModal.classList.remove('active');
 }
 closeModBtn.addEventListener('click', closeSecretModal);
 secretModal.addEventListener('click', (e) => {
     if(e.target === secretModal) closeSecretModal();
+});
+
+// LÓGICA DO BOTÃO DE RESETAR OS DEDOS
+resetFingersBtn.addEventListener('click', () => {
+    if (confirm("Tem certeza que deseja vomitar os dedos e espalhá-los pelo domínio novamente?")) {
+        
+        // 1. Limpa a memória e zera a matriz de dedos pegos
+        localStorage.removeItem('sukunaFingers');
+        collectedFingers = [];
+        
+        // 2. Apaga o botão "Ver Arte" se o usuário já tinha ele
+        const btnArt = document.getElementById('btn-secret-art');
+        if (btnArt) btnArt.remove();
+        
+        // 3. Remove possíveis dedos na tela para não duplicar
+        document.querySelectorAll('.sukuna-finger').forEach(f => f.remove());
+        
+        // 4. Renasce os dedos nos locais de origem
+        spawnFingers();
+        
+        alert("Pacto desfeito! Os 5 dedos retornaram aos seus locais de origem.");
+        inputField.value = '';
+        closeSecretModal();
+    }
 });
 
 // =========================================================================
@@ -904,7 +958,7 @@ function checkRewards(count) {
     else if (count === 5) {
         message = `Você consumiu todos os 5 Dedos!<br><br><strong>RECOMPENSA MÁXIMA ALCANÇADA:</strong> Uma Arte Secreta e Proibida foi destrancada apenas para você!`;
         // NOME DA IMAGEM SECRETA:
-        rewardArt = 'Arte Secreta.jpg'; 
+        rewardArt = 'THUKUNA KKK.gif'; 
     }
 
     showRewardModal(message, rewardArt);
@@ -957,7 +1011,7 @@ function verificarBotaoArteSecreta() {
             btn.style.width = '100%';
             btn.style.backgroundColor = '#4b0082';
             btn.style.borderColor = '#4b0082';
-            btn.textContent = '👁️ Ver Arte Secreta';
+            btn.textContent = '🔍 Ver Arte Secreta';
             
             btn.addEventListener('click', () => {
                 closeSecretModal();
@@ -971,3 +1025,33 @@ function verificarBotaoArteSecreta() {
 
 // Inicia os dedos quando a página carrega
 document.addEventListener('DOMContentLoaded', spawnFingers);
+
+// =========================================================================
+// BOTÃO "IR PARA O TOPO" (SCROLL TO TOP)
+// =========================================================================
+
+// Cria o botão e joga ele na tela
+const scrollTopBtn = document.createElement('button');
+scrollTopBtn.className = 'scroll-to-top';
+scrollTopBtn.setAttribute('aria-label', 'Voltar ao Topo');
+// O símbolo abaixo parece a ponta de uma lâmina/lança subindo
+scrollTopBtn.innerHTML = '▲'; 
+document.body.appendChild(scrollTopBtn);
+
+// Função para mostrar/esconder o botão baseado na rolagem da página
+window.addEventListener('scroll', () => {
+    // Se rolar mais de 300 pixels para baixo, o botão aparece
+    if (window.scrollY > 300) {
+        scrollTopBtn.classList.add('visible');
+    } else {
+        scrollTopBtn.classList.remove('visible');
+    }
+});
+
+// Ação de clicar e subir suavemente
+scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // Faz o scroll ser deslizado e não seco
+    });
+});
