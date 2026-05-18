@@ -1,2 +1,2 @@
 # TCC-Maria-Julia-Henrique-S.-Camolezi
-Site criado para o TCC.
+Site criado para a apresentação do TCC de 2026.
