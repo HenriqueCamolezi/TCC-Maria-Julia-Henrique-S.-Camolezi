@@ -319,13 +319,21 @@ function createGojoParticle() {
 function initBackgroundEffects() {
     setInterval(() => {
         const currentTheme = document.body.getAttribute('data-theme');
-        const amount = window.innerWidth <= 768 ? 2 : 4; // Menos partículas no celular
+        const isMobile = window.innerWidth <= 768;
 
-        for (let i = 0; i < amount; i++) {
-            if (currentTheme === 'dark') {
+        if (currentTheme === 'dark') {
+            const amount = isMobile ? 2 : 4; // Menos partículas no celular
+            for (let i = 0; i < amount; i++) {
                 createSlash(); // Invoca cortes se for Sukuna
-            } else {
-                createGojoParticle(); // Invoca esferas se for Gojo
+            }
+        } else {
+            // Tema Claro (Gojo): Quantidade de bolas significativamente reduzida
+            // Só gera em cerca de 25% das vezes e apenas 1 partícula por vez
+            if (Math.random() > 0.75) {
+                const amount = isMobile ? 1 : 1;
+                for (let i = 0; i < amount; i++) {
+                    createGojoParticle(); // Invoca esferas se for Gojo
+                }
             }
         }
     }, 250);
@@ -489,7 +497,7 @@ styleFix.innerHTML = `
         border-radius: 50%;
         z-index: 100000;
         pointer-events: none;
-        mix-blend-mode: normal; /* Removido o screen para contrastar no fundo branco! */
+        mix-blend-mode: normal;
     }
     
     /* Esferas de convergência com rastro de energia */
@@ -716,11 +724,15 @@ window.createSlash = function() {
 };
 
 // =========================================================================
-// ATIVAÇÃO SUKUNA (TEMA ESCURO)
+// ATIVAÇÃO SUKUNA (TEMA ESCURO) - VOLUMES SEPARADOS
 // =========================================================================
 function activateMalevolentShrine() {
     if (isSukunaEnraged || isGojoEnraged) return; 
     isSukunaEnraged = true;
+
+    // --- CONFIGURAÇÃO DE TEMPO ---
+    const tempoCortes = 4000; // 4 segundos de massacre
+
     const greeting = document.querySelector('.greeting');
     const nameElement = document.querySelector('.name');
     
@@ -737,25 +749,72 @@ function activateMalevolentShrine() {
     if(greeting) greeting.textContent = "EXPANSÃO DE DOMÍNIO:";
     if(nameElement) nameElement.innerHTML = "Santuário <span>Malevolente</span>";
 
+    // --- EFEITOS SONOROS (CONFIGURAÇÃO INDIVIDUAL) ---
+    // Aqui você define o nome do arquivo e o volume exato (0.0 até 1.0) para cada um deles!
+    const configuracaoSons = [
+        { arquivo: 'sukuna domain expansion sound effect.mp3', volume: 1.0 },
+        { arquivo: 'sukuna-slash.mp3', volume: 0.2 },
+        { arquivo: 'sukuna-slash2.mp3',volume: 0.2 },
+    ];
+
+    // Transforma a sua configuração acima em áudios reais
+    const sukunaSounds = configuracaoSons.map(config => {
+        const audio = new Audio(config.arquivo);
+        audio.volume = config.volume; // Aplica o volume específico daquele arquivo!
+        audio.loop = true;
+        return audio;
+    });
+
+    // Dá o play neles com um atraso de 250ms entre um e outro
+    sukunaSounds.forEach((audio, index) => {
+        setTimeout(() => {
+            if (isSukunaEnraged) {
+                audio.play().catch(e => console.log('Áudio bloqueado:', e));
+            }
+        }, index * 250); 
+    });
+    
+    // Reduz a música de fundo
+    const bgMusic = document.getElementById('bg-music');
+    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
+
+    // Inicia a "chuva" de cortes visuais
     rageInterval = setInterval(() => {
         for (let i = 0; i < 5; i++) createSlash();
     }, 120);
 
+    // Quando o tempo configurado acabar:
     setTimeout(() => {
         document.body.classList.remove('sukuna-domain-active');
         if (greeting) greeting.innerHTML = originalGreeting;
         if (nameElement) nameElement.innerHTML = originalName;
-        clearInterval(rageInterval);
+        
+        clearInterval(rageInterval); 
+        
+        // Silencia e zera todos os 3 áudios
+        sukunaSounds.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        
         isSukunaEnraged = false;
-    }, 3000); 
+
+        // Restaura a música de fundo
+        if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
+    }, tempoCortes); 
 }
 
 // =========================================================================
-// ATIVAÇÃO GOJO - VAZIO ROXO CINEMÁTICO (TEMA CLARO)
+// ATIVAÇÃO GOJO - VAZIO ROXO CINEMÁTICO (TEMA CLARO) - SINCRONIZADO
 // =========================================================================
 function activateHollowPurple() {
     if (isSukunaEnraged || isGojoEnraged) return;
     isGojoEnraged = true;
+
+    // --- CONFIGURAÇÃO DE TEMPO (Ajuste para sincronizar com seu áudio) ---
+    // Valores em milissegundos (Ex: 2300 = 2.3 segundos)
+    const tempoConvergencia = 2300; // Tempo que a esfera Vermelha e Azul demoram para se chocar
+    const tempoExplosao = 2300;     // Tempo que a tela fica roxa tremendo até o efeito acabar
 
     const greeting = document.querySelector('.greeting');
     const nameElement = document.querySelector('.name');
@@ -772,20 +831,30 @@ function activateHollowPurple() {
     if(greeting) greeting.textContent = "TÉCNICA IMAGINÁRIA:";
     if(nameElement) nameElement.innerHTML = "Vazio <span>Roxo</span>";
 
-    // 1. Cria as Esferas de Atração
+    // --- EFEITO SONORO DO GOJO ---
+    const gojoAudio = new Audio('gojo-purple.mp3'); // Coloque o nome do seu arquivo MP3 aqui
+    gojoAudio.volume = 1.0;
+    gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
+    
+    // Abaixa a música de fundo
+    const bgMusic = document.getElementById('bg-music');
+    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
+
+    // 1. Cria as Esferas de Atração (Azul e Vermelho) com tempo ajustado
     const blueOrb = document.createElement('div');
     blueOrb.className = 'hollow-orb orb-blue';
+    blueOrb.style.animationDuration = (tempoConvergencia / 1000) + 's'; 
     
     const redOrb = document.createElement('div');
     redOrb.className = 'hollow-orb orb-red';
+    redOrb.style.animationDuration = (tempoConvergencia / 1000) + 's'; 
 
     document.body.appendChild(blueOrb);
     document.body.appendChild(redOrb);
 
-    // Array para guardar os elementos criados e apagá-los depois
     const elementsToRemove = [blueOrb, redOrb];
 
-    // 2. Momento do Impacto (1.45 segundos após iniciar)
+    // 2. Momento do Impacto (Acontece 100ms antes das esferas baterem no meio)
     setTimeout(() => {
         // Inicia Tremor Violento de Câmera
         document.body.classList.add('gojo-domain-active');
@@ -793,33 +862,36 @@ function activateHollowPurple() {
         // Cria a Singularidade Roxa
         const purpleOrb = document.createElement('div');
         purpleOrb.className = 'hollow-orb orb-purple';
+        purpleOrb.style.animationDuration = (tempoExplosao / 1000) + 's';
         document.body.appendChild(purpleOrb);
         elementsToRemove.push(purpleOrb);
 
         // Cria o Clarão da Tela
         const flashScreen = document.createElement('div');
         flashScreen.className = 'purple-flash';
+        flashScreen.style.animationDuration = (tempoExplosao / 1000) + 's';
         document.body.appendChild(flashScreen);
         elementsToRemove.push(flashScreen);
 
-        // Cria 3 Anéis de Onda de Choque (Shockwaves)
+        // Cria Anéis de Onda de Choque (Mais lentos)
         for(let i = 0; i < 3; i++) {
             setTimeout(() => {
                 const shockwave = document.createElement('div');
                 shockwave.className = 'purple-shockwave';
+                shockwave.style.animationDuration = '1.5s'; 
                 document.body.appendChild(shockwave);
                 elementsToRemove.push(shockwave);
-            }, i * 150); // Delay entre os anéis
+            }, i * 200); 
         }
 
-        // Cria 40 Partículas de Energia voando para todas as direções
+        // Cria Partículas de Energia voando
         for (let i = 0; i < 40; i++) {
             const particle = document.createElement('div');
             particle.className = 'purple-particle';
+            particle.style.animationDuration = '1.5s';
             
-            // Matemática para atirar as partículas em um círculo 360º
             const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * 1000 + 400; // O quão longe vão
+            const distance = Math.random() * 1000 + 400; 
             const dx = Math.cos(angle) * distance + 'px';
             const dy = Math.sin(angle) * distance + 'px';
             
@@ -840,9 +912,13 @@ function activateHollowPurple() {
             if (nameElement) nameElement.innerHTML = originalName;
 
             isGojoEnraged = false;
-        }, 2000); // Fica ativo por mais 2 segundos
 
-    }, 1450); // Delay do impacto das duas primeiras esferas
+            // Restaura o volume da música de fundo
+            if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
+
+        }, tempoExplosao);
+
+    }, tempoConvergencia - 100); 
 }
 
 // =========================================================================
@@ -879,17 +955,21 @@ let collectedFingers = JSON.parse(localStorage.getItem('sukunaFingers')) || [];
 
 // Define os locais onde os dedos vão aparecer (espalhados pelas páginas)
 const fingerLocations = [
-    // 1. Rodapé (Aparece em todas as páginas)
-    { id: 'f_footer', selector: 'footer', style: 'bottom: 10px; left: 20px;' },
-    // 2. Menu de Navegação (Aparece em todas as páginas)
-    { id: 'f_header', selector: '#header', style: 'bottom: -40px; right: 10%; z-index: -1;' },
-    // 3. Imagem Hero (Somente no index.html)
-    { id: 'f_hero', selector: '.hero-image-wrapper', style: 'top: -10px; left: 10px; z-index: 10;' },
-    // 4. Seção de Técnicas (Somente no index.html)
-    { id: 'f_skills', selector: '.skills-category', style: 'top: -30px; right: 0px;' },
-    // 5. Cabeçalho da Galeria (Somente nas páginas de galeria)
-    { id: 'f_gallery', selector: '.gallery-header', style: 'top: 0px; right: 20px;' }
-];
+    // 1. VISÍVEL (Todas as páginas): Flutuando de forma óbvia no meio do rodapé (Footer).
+    { id: 'f_footer', selector: 'footer', style: 'top: -30px; left: 50%; transform: translateX(-50%) rotate(15deg); z-index: 10;' },
+    
+    // 2. BEM ESCONDIDO (Todas as páginas): Atrás da barra de navegação no topo esquerdo. Quase invisível, só a pontinha aparece.
+    { id: 'f_header', selector: '.nav-container', style: 'bottom: -35px; left: 15px; z-index: -1; transform: rotate(160deg); opacity: 0.6;' },
+    
+    // 3. VISÍVEL (Apenas na Página Inicial): Grudado na borda da imagem de perfil brilhante.
+    { id: 'f_hero', selector: '.hero-image-wrapper', style: 'bottom: 10px; right: -30px; z-index: 10; transform: rotate(-25deg);' },
+    
+    // 4. ESCONDIDO (Apenas na Página Inicial): Camuflado e escondido um pouco acima dos cartões de Técnicas/Domínios.
+    { id: 'f_skills', selector: '.skills-grid', style: 'top: -45px; right: 5%; z-index: -1; transform: rotate(45deg); filter: brightness(0.6);' },
+    
+    // 5. VISÍVEL (Apenas nas páginas de Galeria): Obriga o usuário a entrar em alguma arte para achar o último dedo perto do título.
+    { id: 'f_gallery', selector: '.gallery-header', style: 'bottom: 10px; right: 15%; z-index: 10; transform: rotate(-15deg);' }
+]
 
 function spawnFingers() {
     fingerLocations.forEach(loc => {
@@ -1054,4 +1134,72 @@ scrollTopBtn.addEventListener('click', () => {
         top: 0,
         behavior: 'smooth' // Faz o scroll ser deslizado e não seco
     });
+});
+
+// =========================================================================
+// BOTÃO EXTRA FLUTUANTE DE VOLTAR (Apenas nas pastas/galerias)
+// =========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Verifica se estamos em uma página de galeria (não na principal)
+    // Ele confere se a URL tem "galeria" ou se existe o cabeçalho de galeria
+    const isGalleryPage = window.location.pathname.includes('galeria') || document.querySelector('.gallery-header');
+
+    if (isGalleryPage) {
+        // Cria o botão no HTML
+        const extraBackBtn = document.createElement('a');
+        extraBackBtn.href = 'index.html#projetos';
+        extraBackBtn.className = 'extra-back-btn';
+        extraBackBtn.title = 'Voltar para as Artes';
+        extraBackBtn.innerHTML = '←'; // Seta apontando pra esquerda
+        
+        document.body.appendChild(extraBackBtn);
+
+        // Adiciona o CSS automaticamente via JS para você não precisar mexer no style.css
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .extra-back-btn {
+                position: fixed;
+                bottom: 90px; /* Fica perfeitamente simétrico, acima do botão secreto '?' */
+                left: 25px;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: var(--glass-bg);
+                border: 1px solid var(--accent-primary);
+                color: var(--accent-primary);
+                font-size: 1.5rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                z-index: 9998;
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+                box-shadow: var(--shadow-aura);
+                text-decoration: none;
+            }
+
+            .extra-back-btn:hover {
+                background: var(--accent-primary);
+                color: #fff;
+                transform: scale(1.1) translateX(-5px); /* Dá um empurrãozinho para a esquerda */
+                box-shadow: 0 0 20px rgba(139, 0, 0, 0.8);
+            }
+
+            /* Brilho Azulado se estiver no tema claro do Gojo */
+            [data-theme="light"] .extra-back-btn:hover {
+                box-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+            }
+            
+            @media (max-width: 768px) {
+                .extra-back-btn {
+                    bottom: 85px;
+                    left: 20px;
+                    width: 45px;
+                    height: 45px;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
 });
