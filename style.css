@@ -2014,3 +2014,46 @@ body.sukuna-domain-active img {
 [data-theme="light"] .scroll-to-top:hover {
     box-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
 }
+
+/* =========================================================================
+   BARRA DE NAVEGAÇÃO TRANSLÚCIDA (TIPO VIDRO) - MOBILE
+========================================================================= */
+@media (max-width: 768px) {
+    #header {
+        position: fixed; /* Mantém a barra fixa no topo enquanto rola a página */
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+
+        /* Efeito de Vidro (Glassmorphism) - Modo Escuro */
+        background: rgba(15, 15, 25, 0.55) !important; /* Cor translúcida */
+        backdrop-filter: blur(12px) saturate(180%);     /* Desfoque do fundo */
+        -webkit-backdrop-filter: blur(12px) saturate(180%); /* Suporte para iPhone (Safari) */
+        
+        /* Borda sutil de vidro e sombra */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    /* Ajuste para quando o tema CLARO estiver ativado */
+    body[data-theme="light"] #header {
+        background: rgba(255, 255, 255, 0.65) !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Caso queira que o MENU ABERTO (gaveta mobile) também fique em vidro */
+    .nav-menu {
+        background: rgba(12, 12, 20, 0.85) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    body[data-theme="light"] .nav-menu {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+}
