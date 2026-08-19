@@ -1038,7 +1038,7 @@ function checkRewards(count) {
     else if (count === 5) {
         message = `Você consumiu todos os 5 Dedos!<br><br><strong>RECOMPENSA MÁXIMA ALCANÇADA:</strong> Uma Arte Secreta e Proibida foi destrancada apenas para você!`;
         // NOME DA IMAGEM SECRETA:
-        rewardArt = 'THUKUNA KKK.gif'; 
+        rewardArt = 'Foto do Subuxa.jpg'; 
     }
 
     showRewardModal(message, rewardArt);

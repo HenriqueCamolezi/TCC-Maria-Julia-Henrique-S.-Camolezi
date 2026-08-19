@@ -1956,6 +1956,8 @@ body.sukuna-domain-active img {
 
 .secret-art-img {
     width: 100%;
+    max-height: 250px; /* Limita a altura máxima da imagem */
+    object-fit: contain; /* Garante que a imagem inteira apareça sem cortar ou perder proporção */
     border-radius: 8px;
     border: 2px solid #ff3333;
     box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
