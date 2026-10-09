@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site de Desenhos | Feiticeira/Feiticeiro Desenhista e Programador</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-trail"></div>
+
+    <header id="header">
+        <div class="nav-container">
+            <a href="#inicio" class="logo">Galeria de Artes Jujutsu</a>
+            
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#inicio" class="nav-link active">Início</a></li>
+                    <li><a href="#projetos" class="nav-link">Artes</a></li>
+                    <li><a href="#habilidades" class="nav-link">Técnicas</a></li>
+                    <li><a href="#contato" class="nav-link">Pacto</a></li>
+                    <li><a href="#creditos" class="nav-link">Créditos</a></li>
+                </ul>
+            </nav>
+
+            <div class="controls">
+                <button id="theme-toggle" aria-label="Alternar Tema">🌙</button>
+                <button class="hamburger" aria-label="Abrir Menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero section-hidden">
+            <div class="hero-content">
+                <h2 class="greeting">Expansão de Domínio: Galeria Absoluta</h2>
+                <h1 class="name">Olá, somos <span>Maria Julia</span> & <span>Henrique Camolezi</span></h1>
+                <p class="subtitle">Nós somos <span id="typist"></span><span class="cursor-blink">|</span></p>
+                <p class="description">Artes desenhadas com energia amaldiçoada absoluta.</p>
+                
+                <div class="hero-buttons">
+                    <a href="#projetos" class="btn btn-primary">Ver Desenhos</a>
+                </div>
+            </div>
+            
+            <div class="hero-image-wrapper">
+                <img src="Carteirinha Jujutsu Henrique.png" alt="Foto de Perfil" class="profile-img">
+                <div class="aura-glow"></div>
+            </div>
+        </section>
+
+        <section id="projetos" class="projects section-hidden">
+            <h2 class="section-title">Desenhos de <span>Grau Especial</span></h2>
+            
+            <div class="projects-grid">
+                <article class="project-card">
+                    <div class="project-img-container">
+                        <img src="Satoru Gozo.jpg" alt="Satoru Gojo" class="project-img">
+                    </div>
+                    <div class="project-info">
+                        <h3>Satoru Gojo</h3>
+                        <p>Contem fanarts do personagem Suguru Geto.</p>
+                        <div class="tech-tags">
+                            <span>3</span>
+                        </div>
+                        <a href="galeria-gojo.html" class="btn-link">Acessar Pasta &rarr;</a>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-img-container">
+                        <img src="Suguru Geto 2.jpg" alt="Suguru Geto" class="project-img">
+                    </div>
+                    <div class="project-info">
+                        <h3>Suguru Geto</h3>
+                        <p>Contem fanarts do personagem Suguru Geto.</p>
+                        <div class="tech-tags">
+                            <span>3</span>
+                        </div>
+                        <a href="galeria-geto.html" class="btn-link">Acessar Pasta &rarr;</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="habilidades" class="skills section-hidden">
+            <h2 class="section-title">Técnicas <span>Amaldiçoadas</span></h2>
+            
+            <div class="skills-grid">
+                
+                <!-- ================= DOMÍNIO DE ARTES (Maria) ================= -->
+                <div class="skill-card domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🖌️</div>
+                        <h3>Domínio de Artes</h3>
+                        <span class="domain-owner">Maria Julia</span>
+                    </div>
+                    
+                    <div class="skill-list">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <span class="skill-name">Folha Branca</span>
+                                <span class="skill-pct">100%</span>
+                            </div>
+                            <div class="progress-bg">
+                                <div class="progress-bar" data-width="100%"></div>
+                            </div>
+                        </div>
+        
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <span class="skill-name">Arte Digital</span>
+                                <span class="skill-pct">90%</span>
+                            </div>
+                            <div class="progress-bg">
+                                <div class="progress-bar" data-width="90%"></div>
+                            </div>
+                        </div>
+        
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <span class="skill-name">Pintura e Sombreamento</span>
+                                <span class="skill-pct">95%</span>
+                            </div>
+                            <div class="progress-bg">
+                                <div class="progress-bar" data-width="95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- ================= DOMÍNIO DE CÓDIGO (Henrique) ================= -->
+                <div class="skill-card domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">⌨️</div>
+                        <h3>Domínio de Código</h3>
+                        <span class="domain-owner">Henrique Camolezi</span>
+                    </div>
+                    
+                    <div class="skill-list">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <span class="skill-name">HTML & CSS Front-end</span>
+                                <span class="skill-pct">95%</span>
+                            </div>
+                            <div class="progress-bg">
+                                <div class="progress-bar" data-width="95%"></div>
+                            </div>
+                        </div>
+        
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <span class="skill-name">JavaScript (Técnica Amaldiçoada)</span>
+                                <span class="skill-pct">85%</span>
+                            </div>
+                            <div class="progress-bg">
+                                <div class="progress-bar" data-width="85%"></div>
+                            </div>
+                        </div>
+        
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <span class="skill-name">Lógica e Automação</span>
+                                <span class="skill-pct">90%</span>
+                            </div>
+                            <div class="progress-bg">
+                                <div class="progress-bar" data-width="90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" class="contact section-hidden">
+            <h2 class="section-title">Pacto de <span>Vínculo</span></h2>
+            
+            <div class="pacto-container">
+                <!-- Cartão Maria Julia -->
+                <div class="pacto-card">
+                    <div class="pacto-header">
+                        <h3>Maria Julia</h3>
+                        <span class="pacto-role">Feiticeira Desenhista</span>
+                    </div>
+                    <p class="pacto-desc">Estabeleça um pacto para a criação de artes, ilustrações e comissões amaldiçoadas.</p>
+                    <div class="social-links pacto-links">
+                        <a href="https://github.com/hannavalentine" class="social-btn" target="_blank">
+                            <span class="icon">💻</span> GitHub
+                        </a>
+                        <a href="https://wa.me/+5516999945269" class="social-btn" target="_blank">
+                            <span class="icon">📱</span> WhatsApp
+                        </a>
+                        <a href="mailto:mariajuliavallenterosada@gmail.com" class="social-btn" target="_blank">
+                            <span class="icon">✉️</span> E-mail
+                        </a>
+                    </div>
+                </div>
+        
+                <!-- Cartão Henrique Camolezi -->
+                <div class="pacto-card">
+                    <div class="pacto-header">
+                        <h3>Henrique Camolezi</h3>
+                        <span class="pacto-role">Feiticeiro Programador</span>
+                    </div>
+                    <p class="pacto-desc">Estabeleça um pacto para desenvolvimento de sistemas, automações e expansões de domínio web.</p>
+                    <div class="social-links pacto-links">
+                        <a href="https://github.com/HenriqueCamolezi" class="social-btn" target="_blank">
+                            <span class="icon">💻</span> GitHub
+                        </a>
+                        <a href="https://wa.me/+5516988112105" class="social-btn" target="_blank">
+                            <span class="icon">📱</span> WhatsApp
+                        </a>
+                        <a href="mailto:maxextreme121@gmail.com" class="social-btn" target="_blank">
+                            <span class="icon">✉️</span> E-mail
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="creditos" class="creditos section-hidden">
+            <h2 class="section-title">Créditos e <span>Agradecimentos</span></h2>
+            
+            <div class="creditos-container">
+                <div class="credito-card">
+                    <h3>Inspiração Original</h3>
+                    <p>Toda a temática visual, termos e referências são inspiradas na obra <strong>Jujutsu Kaisen</strong>, criada pelo mangaká <strong>Gege Akutami</strong>.</p>
+                </div>
+
+                <div class="credito-card">
+                    <h3>Desenvolvimento</h3>
+                    <p>Desenhos da galeria produzidos por <strong>Maria Julia</strong>, codificação e programação do site produzida por <strong>Henrique Camolezi</strong>.</p>
+                </div>
+
+                <div class="credito-card">
+                    <h3>Recursos Visuais</h3>
+                    <p>Fontes fornecidas pelo Google Fonts (Inter e Oswald). Efeitos de domínio, cursores e animações criados via CSS e JavaScript puro.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>Desenvolvido com Energia Absoluta por <strong>Maria Julia</strong> & <strong>Henrique Camolezi</strong></p>
+            <p class="small">© Galeria de Artes 2026 - Maria Julia & Henrique.</p>
+        </div>
+    </footer>
+
+<!-- =========================================================================
+     MÚSICA DE BACKGROUND
+========================================================================= -->
+<!-- A tag 'loop' garante que a música repita infinitamente -->
+<audio id="bg-music" loop>
+    <source src="more than words.mp3" type="audio/mpeg">
+</audio>
+
+<button id="music-toggle" class="music-btn" aria-label="Tocar/Pausar Música">
+    ♪
+</button>
+
+<script src="script.js"></script>
+
+</body>
+</html>
