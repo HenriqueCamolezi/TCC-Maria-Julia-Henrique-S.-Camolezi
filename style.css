@@ -76,10 +76,12 @@ ul {
     height: 8px;
     background-color: var(--accent-primary);
     border-radius: 50%;
-    pointer-events: none;
-    z-index: 999999; /* AUMENTADO PARA FICAR ACIMA DA ARTE SECRETA */
     transform: translate(-50%, -50%);
     transition: width 0.2s, height 0.2s;
+    
+    /* ADICIONE OU VERIFIQUE ESTAS DUAS LINHAS */
+    pointer-events: none !important; 
+    z-index: 999999; 
 }
 
 .cursor-trail {
@@ -88,12 +90,14 @@ ul {
     height: 30px;
     border: 1px solid var(--accent-primary);
     border-radius: 50%;
-    pointer-events: none;
-    z-index: 999998; /* AUMENTADO PARA FICAR ACIMA DA ARTE SECRETA */
     transform: translate(-50%, -50%);
     transition: transform 0.1s ease, background-color 0.3s;
     box-shadow: 0 0 10px var(--accent-primary);
     opacity: 0.5;
+    
+    /* ADICIONE OU VERIFIQUE ESTAS DUAS LINHAS */
+    pointer-events: none !important; 
+    z-index: 999998; 
 }
 
 /* =========================================================================
@@ -373,10 +377,12 @@ section {
 /* =========================================================================
    PROJECTS (Artes)
    ========================================================================= */
-.projects-grid {
+   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+    gap: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .project-card {
@@ -395,14 +401,23 @@ section {
 
 .project-img-container {
     width: 100%;
-    height: 200px;
+    aspect-ratio: 1 / 1; /* Mantém o formato quadrado perfeito */
     overflow: hidden;
+    
+    /* Sistema Flexbox para garantir a centralização absoluta */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent; /* Remove qualquer fundo escuro residual */
 }
 
 .project-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* MODIFICAÇÃO AQUI: Preenche o quadrado inteiro e corta excessos lateralmente/verticalmente de forma inteligente */
+    object-fit: cover; 
+    /* Garante o foco no centro da arte */
+    object-position: center; 
     transition: transform 0.5s ease;
 }
 
@@ -411,19 +426,25 @@ section {
 }
 
 .project-info {
-    padding: 1.5rem;
+    padding: 1rem; /* Reduz o espaçamento interno do texto */
 }
 
 .project-info h3 {
-    margin-bottom: 0.5rem;
-    font-size: 1.4rem;
+    margin-bottom: 0.3rem;
+    font-size: 1rem; /* Diminui o título do personagem (ex: Satoru Gojo) */
 }
 
 .project-info p {
     color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-    line-height: 1.5;
+    font-size: 0.75rem; /* Diminui a descrição do cartão */
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+}
+
+/* Ajusta o tamanho do contador de fotos "3" e do link de acesso */
+.project-info .tech-tags span,
+.btn-link {
+    font-size: 0.7rem !important;
 }
 
 .tech-tags {
@@ -786,28 +807,33 @@ footer .small {
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    /* Reduz o tamanho mínimo da miniatura para metade do original */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem; /* Ajusta o espaçamento entre as imagens menores */
 }
 
 .gallery-item {
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
-    background: var(--glass-bg);
+    background: transparent; /* Remove o fundo preto ou escuro */
     border: 1px solid var(--glass-border);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-}
-
-.gallery-item:hover {
-    transform: translateY(-15px);
-    box-shadow: var(--shadow-aura);
+    
+    aspect-ratio: 1 / 1; /* Mantém as miniaturas internas quadradas */
+    /* Sistema Flexbox para centralização */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .gallery-img {
     width: 100%;
-    height: 300px;
-    object-fit: cover;
+    height: 100%;
+    /* MODIFICAÇÃO AQUI: Faz a fanart preencher o quadrado de 150px completamente, eliminando bordas vazias */
+    object-fit: cover; 
+    /* Centraliza o foco do desenho na miniatura */
+    object-position: center; 
     transition: transform 0.5s ease;
 }
 
@@ -1322,7 +1348,11 @@ footer .small {
     }
 
     .gallery-img {
-        height: 250px;
+        width: 100%;
+        aspect-ratio: 1 / 1; /* Força a proporção 1:1 na galeria */
+        object-fit: contain; /* Centraliza a imagem inteira sem cortá-la */
+        background-color: rgba(0, 0, 0, 0.2); /* Fundo para preencher espaços se a imagem original não for quadrada */
+        transition: transform 0.5s ease;
     }
 
     .gallery-header {
@@ -1487,16 +1517,17 @@ footer .small {
    ESTADO DE LUPA/OLHO NO CURSOR (Ao passar em imagens)
 ========================================================================= */
 .cursor-trail.view-mode {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background-color: var(--glass-bg);
     border: 2px solid var(--accent-primary);
     backdrop-filter: blur(2px);
-    
-    /* Adiciona um ícone de "Olho" ou "Lupa" no centro do rastro */
     display: flex;
     justify-content: center;
     align-items: center;
+    
+    /* ESTA LINHA GARANTE O SUCESSO DO EFEITO */
+    pointer-events: none !important; 
 }
 
 .cursor-trail.view-mode::after {
@@ -1912,29 +1943,32 @@ body.sukuna-domain-active img {
 
 .reward-content {
     background: #0a0a0a;
-    padding: 2.5rem 2rem;
+    /* Reduz o padding para economizar espaço interno */
+    padding: 1.25rem 1rem; 
     border-radius: 12px;
     border: 2px solid #8b0000;
     box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
     text-align: center;
     position: relative;
     width: 90%;
-    max-width: 450px;
+    /* REDUÇÃO DE 50%: Define um limite máximo bem menor para compactar a caixa */
+    max-width: 250px; 
     color: #fff;
 }
 
+/* Ajuste proporcional para os textos da caixa menor */
 .reward-content h3 {
     color: #ff3333;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.8rem;
     font-family: 'Oswald', sans-serif;
     text-transform: uppercase;
-    font-size: 1.6rem;
+    font-size: 1.1rem; /* Reduzido para harmonizar com a caixa compacta */
     text-shadow: 0 0 10px rgba(255,0,0,0.5);
 }
 
 .reward-content p {
-    font-size: 1.1rem;
-    line-height: 1.6;
+    font-size: 0.8rem; /* Texto menor e legível */
+    line-height: 1.4;
     color: #ddd;
 }
 
@@ -1951,23 +1985,36 @@ body.sukuna-domain-active img {
 }
 
 .secret-art-container {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
+    width: 100%;
+    /* Força o contêiner da imagem a ser um quadrado perfeito */
+    aspect-ratio: 1 / 1; 
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 2px solid #ff3333;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
 }
 
 .secret-art-img {
     width: 100%;
-    max-height: 250px; /* Limita a altura máxima da imagem */
-    object-fit: contain; /* Garante que a imagem inteira apareça sem cortar ou perder proporção */
-    border-radius: 8px;
-    border: 2px solid #ff3333;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
-    margin-bottom: 0.5rem;
+    height: 100%;
+    /* Faz a arte preencher o quadrado completamente, removendo as faixas pretas */
+    object-fit: cover; 
+    /* Mantém o foco centralizado nos personagens */
+    object-position: center; 
+    margin-bottom: 0; /* Remove margem residual */
 }
 
+/* Ajuste da legenda para sumir com margens excessivas */
 .small-text {
-    font-size: 0.85rem !important;
+    font-size: 0.65rem !important;
     color: #888 !important;
     font-style: italic;
+    margin-top: 0.5rem;
+    line-height: 1.2;
 }
 
 /* =========================================================================
@@ -2057,5 +2104,34 @@ body.sukuna-domain-active img {
     body[data-theme="light"] .nav-menu {
         background: rgba(255, 255, 255, 0.9) !important;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* =========================================================================
+   AJUSTE DE RESPONSIVIDADE - EXCLUSIVO PARA DESKTOPS (70% DO TAMANHO)
+   ========================================================================= */
+@media (min-width: 769px) {
+    .reward-content {
+        /* Define a largura máxima exata de 70% do tamanho inicial de 450px */
+        max-width: 315px; 
+        /* Amplia proporcionalmente o preenchimento interno no PC */
+        padding: 1.8rem 1.5rem; 
+    }
+
+    .reward-content h3 {
+        /* Aumenta o tamanho do título para destacar no monitor */
+        font-size: 1.4rem; 
+        margin-bottom: 1rem;
+    }
+
+    .reward-content p {
+        /* Ajusta o texto descritivo para uma leitura ideal em telas maiores */
+        font-size: 0.95rem; 
+    }
+    
+    .small-text {
+        /* Redimensiona a legenda inferior de instrução da imagem */
+        font-size: 0.75rem !important;
+        margin-top: 0.8rem;
     }
 }
