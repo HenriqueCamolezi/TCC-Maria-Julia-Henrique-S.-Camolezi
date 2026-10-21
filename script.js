@@ -1064,7 +1064,6 @@ function showRewardModal(text, imageUrl) {
             <div class="secret-art-container">
                 <!-- Se quiser mudar o nome da imagem secreta, mude o src abaixo -->
                 <img src="${imageUrl}" alt="Arte Secreta" class="secret-art-img" onerror="this.src='Satoru Gozo.jpg'; this.alt='Arte não encontrada';">
-                <p class="small-text">Para que a arte apareça, salve sua imagem na pasta com o nome exato de 'Arte Secreta.jpg'</p>
             </div>
         `;
     }
