@@ -647,12 +647,15 @@ const closeModBtn = secretModal.querySelector('.secret-close');
 const errorMsg = secretModal.querySelector('.secret-error');
 const resetFingersBtn = secretModal.querySelector('#btn-reset-fingers');
 
-// ISSO FAZ O BOTÃO "?" ABRIR A ABA (Se sumir, o botão para de funcionar)
+// ISSO FAZ O BOTÃO "?" ABRIR A ABA (CORRIGIDO)
 secretBtn.addEventListener('click', () => {
     secretModal.classList.add('active');
     inputField.value = ''; 
     errorMsg.style.display = 'none'; 
     inputField.focus(); 
+    
+    // Força o botão a aparecer sempre que abrir a caixinha
+    verificarBotaoArteSecreta();
 });
 
 // FECHAR A ABA DO PACTO
@@ -1053,17 +1056,19 @@ function showRewardModal(text, imageUrl) {
     modal.className = 'reward-modal active';
     
     let contentHtml = `
-        <div class="reward-content">
+        <div class="reward-content" style="max-width: 90vw; width: 500px; display: flex; flex-direction: column; align-items: center;">
             <button class="reward-close" aria-label="Fechar">✕</button>
             <h3>Item Amaldiçoado</h3>
-            <p>${text}</p>
+            <p style="text-align: center; width: 100%;">${text}</p>
     `;
 
     if (imageUrl) {
         contentHtml += `
-            <div class="secret-art-container">
-                <!-- Se quiser mudar o nome da imagem secreta, mude o src abaixo -->
-                <img src="${imageUrl}" alt="Arte Secreta" class="secret-art-img" onerror="this.src='Satoru Gozo.jpg'; this.alt='Arte não encontrada';">
+            <div class="secret-art-container" style="width: 100%; height: 350px; display: flex; justify-content: center; align-items: center; overflow: hidden; background: rgba(0,0,0,0.2); border-radius: 8px; margin-top: 15px;">
+                <!-- O segredo do conserto está no estilo inline abaixo (max-width, max-height e object-fit) -->
+                <img src="${imageUrl}" alt="Arte Secreta" class="secret-art-img" 
+                     style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;"
+                     onerror="this.src='Satoru Gozo.jpg'; this.alt='Arte não encontrada';">
             </div>
         `;
     }
@@ -1076,30 +1081,6 @@ function showRewardModal(text, imageUrl) {
         modal.classList.remove('active');
         setTimeout(() => modal.remove(), 300);
     });
-}
-
-function verificarBotaoArteSecreta() {
-    // Se o usuário já pegou os 5 dedos, adiciona um botão no menu de senha '?' para ver a arte novamente
-    if (collectedFingers.length === 5) {
-        const secretContent = document.querySelector('.secret-content');
-        if (secretContent && !document.getElementById('btn-secret-art')) {
-            const btn = document.createElement('button');
-            btn.id = 'btn-secret-art';
-            btn.className = 'btn btn-primary';
-            btn.style.marginTop = '20px';
-            btn.style.width = '100%';
-            btn.style.backgroundColor = '#4b0082';
-            btn.style.borderColor = '#4b0082';
-            btn.textContent = '🔍 Ver Arte Secreta';
-            
-            btn.addEventListener('click', () => {
-                closeSecretModal();
-                checkRewards(5); 
-            });
-            
-            secretContent.appendChild(btn);
-        }
-    }
 }
 
 // Inicia os dedos quando a página carrega
