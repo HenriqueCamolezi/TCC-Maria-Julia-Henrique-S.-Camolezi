@@ -1028,6 +1028,55 @@ function collectFinger(id, element) {
     verificarBotaoArteSecreta();
 }
 
+// =========================================================================
+// BOTÃO DA ARTE SECRETA (Aparece no modal '?' ao coletar os 5 dedos)
+// =========================================================================
+function verificarBotaoArteSecreta() {
+    const secretContent = document.querySelector('.secret-content');
+    const resetBtn = document.getElementById('btn-reset-fingers');
+    if (!secretContent || !resetBtn) return;
+
+    // Atualiza a lista direto do localStorage para garantir sincronia entre páginas
+    const dedosSalvos = JSON.parse(localStorage.getItem('sukunaFingers')) || [];
+    let btnArt = document.getElementById('btn-secret-art');
+
+    // Se ainda não pegou todos os 5 dedos, remove o botão (caso exista) e sai
+    if (dedosSalvos.length < totalFingers) {
+        if (btnArt) btnArt.remove();
+        return;
+    }
+
+    // Cria o botão apenas se ele ainda não estiver na tela
+    if (!btnArt) {
+        btnArt = document.createElement('button');
+        btnArt.id = 'btn-secret-art';
+        btnArt.type = 'button';
+        btnArt.className = 'btn btn-primary';
+        btnArt.innerHTML = '👁️ Ver Arte Secreta';
+        btnArt.style.cssText = `
+            margin-top: 15px;
+            width: 100%;
+            background: linear-gradient(45deg, #4b0082, #8b0000);
+            border: 1px solid #ff3333;
+            color: #fff;
+            padding: 10px;
+            font-size: 0.95rem;
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.6);
+        `;
+
+        btnArt.addEventListener('click', () => {
+            closeSecretModal();
+            showRewardModal(
+                `<strong>ARTE SECRETA DESBLOQUEADA!</strong><br><br>Você absorveu todos os 5 Dedos do Rei das Maldições. Clique na imagem abaixo para ampliar.`,
+                'Thukuna.jpg'
+            );
+        });
+
+        // Insere o botão logo acima do botão "Resetar Dedos do Sukuna"
+        secretContent.insertBefore(btnArt, resetBtn);
+    }
+}
+
 function checkRewards(count) {
     let message = `Energia Amaldiçoada absorvida! (${count}/${totalFingers} Dedos)`;
     let rewardArt = null;
@@ -1065,9 +1114,8 @@ function showRewardModal(text, imageUrl) {
     if (imageUrl) {
         contentHtml += `
             <div class="secret-art-container" style="width: 100%; height: 350px; display: flex; justify-content: center; align-items: center; overflow: hidden; background: rgba(0,0,0,0.2); border-radius: 8px; margin-top: 15px;">
-                <!-- O segredo do conserto está no estilo inline abaixo (max-width, max-height e object-fit) -->
                 <img src="${imageUrl}" alt="Arte Secreta" class="secret-art-img" 
-                     style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;"
+                     style="max-width: 100%; max-height: 100%; object-fit: contain; display: block; cursor: pointer;"
                      onerror="this.src='Satoru Gozo.jpg'; this.alt='Arte não encontrada';">
             </div>
         `;
@@ -1076,6 +1124,25 @@ function showRewardModal(text, imageUrl) {
     contentHtml += `</div>`;
     modal.innerHTML = contentHtml;
     document.body.appendChild(modal);
+
+    // Conecta o clique direto na Arte Secreta para abrir o modo de visualização
+    const secretImg = modal.querySelector('.secret-art-img');
+    if (secretImg) {
+        secretImg.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const lbModal = document.getElementById('lightbox-modal');
+            if (lbModal) {
+                document.body.appendChild(lbModal);
+                lbModal.style.setProperty('z-index', '999990', 'important');
+            }
+
+            if (typeof window.openLightbox === 'function') {
+                window.openLightbox(secretImg);
+            }
+        });
+    }
 
     modal.querySelector('.reward-close').addEventListener('click', () => {
         modal.classList.remove('active');

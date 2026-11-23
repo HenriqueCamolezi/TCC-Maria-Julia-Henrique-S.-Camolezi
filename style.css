@@ -815,13 +815,14 @@ footer .small {
 .gallery-item {
     border-radius: 8px;
     overflow: hidden;
-    background: transparent; /* Remove o fundo preto ou escuro */
-    border: 1px solid var(--glass-border);
+    background: transparent;
+    /* A variável --accent-primary já alterna automaticamente entre vermelho (#8b0000) e azul (#00bfff) */
+    border: 2px solid var(--accent-primary);
+    box-shadow: var(--shadow-aura);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     
-    aspect-ratio: 1 / 1; /* Mantém as miniaturas internas quadradas */
-    /* Sistema Flexbox para centralização */
+    aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -830,10 +831,9 @@ footer .small {
 .gallery-img {
     width: 100%;
     height: 100%;
-    /* MODIFICAÇÃO AQUI: Faz a fanart preencher o quadrado de 150px completamente, eliminando bordas vazias */
-    object-fit: cover; 
-    /* Centraliza o foco do desenho na miniatura */
-    object-position: center; 
+    object-fit: cover;
+    /* Desloca o enquadramento para o terço superior onde fica o rosto */
+    object-position: center 20%;
     transition: transform 0.5s ease;
 }
 
@@ -844,78 +844,116 @@ footer .small {
 /* =========================================================================
    LIGHTBOX (Visualizador de Imagens com Zoom)
    ========================================================================= */
-.lightbox-modal {
+   .lightbox-modal {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    z-index: 10000;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     justify-content: center;
     align-items: center;
-    pointer-events: none;
+    z-index: 999990;
 }
 
 .lightbox-modal.active {
     display: flex;
-    pointer-events: auto;
+    animation: fadeIn 0.25s ease;
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next,
+.lightbox-controls {
+    z-index: 999995;
+}
+
+/* Deixa claro que a arte secreta é clicável */
+.secret-art-img {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.secret-art-img:hover {
+    transform: scale(1.03);
+}
+
+.lightbox-modal.active {
+    display: flex;
 }
 
 .lightbox-container {
     position: relative;
     width: 90%;
-    max-width: 900px;
-    height: 85vh;
+    max-width: 950px;
+    height: 90vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    pointer-events: auto;
+    gap: 1.2rem;
+}
+
+/* Palco que prende a imagem dentro da área visível durante o zoom */
+.lightbox-stage {
+    position: relative;
+    width: 100%;
+    height: 74vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 10px;
+    z-index: 1;
 }
 
 .lightbox-image {
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 100%;
     object-fit: contain;
     border-radius: 8px;
     transition: transform 0.2s ease;
-    cursor: grab;
-    pointer-events: auto;
+    cursor: default;
+    user-select: none;
+    -webkit-user-drag: none;
+    touch-action: none;
 }
 
-.lightbox-image:active {
-    cursor: grabbing;
-}
-
-/* Botões de Navegação */
+/* Botões Fixos (Fechar, Anterior, Próxima) sempre acima da imagem */
 .lightbox-close,
 .lightbox-prev,
 .lightbox-next {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.1);
+    position: fixed;
+    background: rgba(15, 15, 15, 0.85);
     border: 1px solid var(--accent-primary);
     color: var(--accent-primary);
-    font-size: 1.5rem;
-    width: 50px;
-    height: 50px;
+    font-size: 1.4rem;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: auto;
-    z-index: 10001;
+    z-index: 20010;
 }
 
-.lightbox-close:hover,
-.lightbox-prev:hover,
-.lightbox-next:hover {
+.lightbox-close:hover:not(:disabled),
+.lightbox-prev:hover:not(:disabled),
+.lightbox-next:hover:not(:disabled) {
     background: var(--accent-primary);
     color: #fff;
     box-shadow: var(--shadow-aura);
+    transform: scale(1.08);
+}
+
+.lightbox-prev:hover:not(:disabled),
+.lightbox-next:hover:not(:disabled) {
+    transform: translateY(-50%) scale(1.08);
 }
 
 .lightbox-close {
@@ -937,60 +975,64 @@ footer .small {
 
 .lightbox-prev:disabled,
 .lightbox-next:disabled {
-    opacity: 0.3;
+    opacity: 0.25;
     cursor: not-allowed;
-    border-color: var(--text-muted);
-    color: var(--text-muted);
-    pointer-events: none;
+    border-color: #666;
+    color: #666;
 }
 
-.lightbox-prev:disabled:hover,
-.lightbox-next:disabled:hover {
-    background: transparent;
-    box-shadow: none;
-}
-
-/* Controles de Zoom */
+/* Barra de Controles de Zoom */
 .lightbox-controls {
+    position: relative;
+    z-index: 20010;
     display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: 0.75rem;
     align-items: center;
     justify-content: center;
-    pointer-events: auto;
-    position: relative;
-    z-index: 10001;
+    background: rgba(15, 15, 15, 0.85);
+    padding: 10px 18px;
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
     flex-wrap: wrap;
 }
 
 .lightbox-zoom-in,
 .lightbox-zoom-out,
 .lightbox-reset-zoom {
-    background: rgba(139, 0, 0, 0.2);
+    background: transparent;
     border: 1px solid var(--accent-primary);
     color: var(--accent-primary);
-    padding: 10px 15px;
+    padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
     font-family: 'Oswald', sans-serif;
-    transition: all 0.3s ease;
-    pointer-events: auto;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
 }
 
-.lightbox-zoom-in:hover,
-.lightbox-zoom-out:hover,
-.lightbox-reset-zoom:hover {
+.lightbox-zoom-in:hover:not(:disabled),
+.lightbox-zoom-out:hover:not(:disabled),
+.lightbox-reset-zoom:hover:not(:disabled) {
     background: var(--accent-primary);
     color: #fff;
     box-shadow: var(--shadow-aura);
 }
 
+.lightbox-zoom-in:disabled,
+.lightbox-zoom-out:disabled,
+.lightbox-reset-zoom:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    border-color: #666;
+    color: #666;
+}
+
 .lightbox-counter {
-    color: var(--text-main);
+    color: #f0f0f0;
     font-weight: 600;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
     font-family: 'Oswald', sans-serif;
-    pointer-events: none;
+    letter-spacing: 1px;
 }
 
 /* =========================================================================
@@ -1349,9 +1391,10 @@ footer .small {
 
     .gallery-img {
         width: 100%;
-        aspect-ratio: 1 / 1; /* Força a proporção 1:1 na galeria */
-        object-fit: contain; /* Centraliza a imagem inteira sem cortá-la */
-        background-color: rgba(0, 0, 0, 0.2); /* Fundo para preencher espaços se a imagem original não for quadrada */
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        object-position: center 20%;
         transition: transform 0.5s ease;
     }
 
@@ -2135,3 +2178,65 @@ body.sukuna-domain-active img {
         margin-top: 0.8rem;
     }
 }
+
+/* Garante que o Lightbox fique sempre na frente da caixa de recompensa */
+.lightbox-modal {
+    z-index: 200000 !important;
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next,
+.lightbox-controls {
+    z-index: 200010 !important;
+}
+
+.secret-art-img {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    transition: transform 0.3s ease;
+}
+
+.secret-art-img:hover {
+    transform: scale(1.03);
+}
+
+/* =========================================================================
+   VISUALIZAÇÃO DA ARTE SECRETA E LIGHTBOX NO MOBILE
+   ========================================================================= */
+   .secret-art-container,
+   .secret-art-img {
+       pointer-events: auto !important;
+       touch-action: manipulation;
+       -webkit-tap-highlight-color: transparent;
+   }
+   
+   .lightbox-modal {
+       z-index: 999990 !important;
+   }
+   
+   .lightbox-close,
+   .lightbox-prev,
+   .lightbox-next,
+   .lightbox-controls {
+       z-index: 999995 !important;
+   }
+   
+   @media (max-width: 768px) {
+       .lightbox-container {
+           width: 95%;
+           height: 90vh;
+           max-height: 90vh;
+           justify-content: center;
+       }
+   
+       .lightbox-stage {
+           width: 100%;
+           height: 68vh;
+       }
+   
+       .lightbox-image {
+           max-width: 100%;
+           max-height: 100%;
+       }
+   }

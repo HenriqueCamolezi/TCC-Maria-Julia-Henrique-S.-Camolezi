@@ -2,93 +2,114 @@
 // LIGHTBOX - SISTEMA DE VISUALIZAÇÃO E ZOOM DE IMAGENS
 // =========================================================================
 
-const lightboxModal = document.createElement('div');
-lightboxModal.id = 'lightbox-modal';
-lightboxModal.className = 'lightbox-modal';
-lightboxModal.innerHTML = `
-    <div class="lightbox-container">
-        <button class="lightbox-close" aria-label="Fechar">✕</button>
-        <button class="lightbox-prev" aria-label="Imagem Anterior">❮</button>
-        <button class="lightbox-next" aria-label="Próxima Imagem">❯</button>
-        <img src="" alt="Lightbox Image" class="lightbox-image">
-        <div class="lightbox-controls">
-            <button class="lightbox-zoom-in" aria-label="Aumentar Zoom">🔍+</button>
-            <button class="lightbox-zoom-out" aria-label="Diminuir Zoom">🔍−</button>
-            <button class="lightbox-reset-zoom" aria-label="Resetar Zoom">Resetar</button>
-            <span class="lightbox-counter">1 / 1</span>
-        </div>
-    </div>
-`;
-
-document.body.appendChild(lightboxModal);
-
 let currentImageIndex = 0;
 let galleryImages = [];
 let zoomLevel = 1;
 const MAX_ZOOM = 3;
 const MIN_ZOOM = 1;
-const ZOOM_STEP = 0.2;
+const ZOOM_STEP = 0.25;
 
-// Variáveis para arrastar
 let isDragging = false;
 let dragStartX = 0;
 let dragStartY = 0;
 let offsetX = 0;
 let offsetY = 0;
 
-// Elementos do lightbox
-const modal = document.getElementById('lightbox-modal');
-const lightboxImage = modal.querySelector('.lightbox-image');
-const closeBtn = modal.querySelector('.lightbox-close');
-const prevBtn = modal.querySelector('.lightbox-prev');
-const nextBtn = modal.querySelector('.lightbox-next');
-const zoomInBtn = modal.querySelector('.lightbox-zoom-in');
-const zoomOutBtn = modal.querySelector('.lightbox-zoom-out');
-const resetZoomBtn = modal.querySelector('.lightbox-reset-zoom');
-const counterSpan = modal.querySelector('.lightbox-counter');
+// Cria o modal apenas uma vez
+const lightboxModal = document.createElement('div');
+lightboxModal.id = 'lightbox-modal';
+lightboxModal.className = 'lightbox-modal';
+lightboxModal.innerHTML = `
+    <button type="button" class="lightbox-close" aria-label="Fechar">✕</button>
+    <button type="button" class="lightbox-prev" aria-label="Imagem Anterior">❮</button>
+    <button type="button" class="lightbox-next" aria-label="Próxima Imagem">❯</button>
+    
+    <div class="lightbox-container">
+        <div class="lightbox-stage">
+            <img src="" alt="Lightbox Image" class="lightbox-image">
+        </div>
+        <div class="lightbox-controls">
+            <button type="button" class="lightbox-zoom-in" aria-label="Aumentar Zoom">🔍+</button>
+            <button type="button" class="lightbox-zoom-out" aria-label="Diminuir Zoom">🔍−</button>
+            <button type="button" class="lightbox-reset-zoom" aria-label="Resetar Zoom">Resetar</button>
+            <span class="lightbox-counter">1 / 1</span>
+        </div>
+    </div>
+`;
 
-// Função para abrir o lightbox
-function openLightbox(imageElement) {
-    // Pega todas as imagens da galeria da seção atual
+function ensureLightboxInBody() {
+    if (document.body && !document.getElementById('lightbox-modal')) {
+        document.body.appendChild(lightboxModal);
+    }
+}
+
+if (document.body) {
+    ensureLightboxInBody();
+} else {
+    document.addEventListener('DOMContentLoaded', ensureLightboxInBody);
+}
+
+const lightboxStage = lightboxModal.querySelector('.lightbox-stage');
+const lightboxImage = lightboxModal.querySelector('.lightbox-image');
+const closeBtn = lightboxModal.querySelector('.lightbox-close');
+const prevBtn = lightboxModal.querySelector('.lightbox-prev');
+const nextBtn = lightboxModal.querySelector('.lightbox-next');
+const zoomInBtn = lightboxModal.querySelector('.lightbox-zoom-in');
+const zoomOutBtn = lightboxModal.querySelector('.lightbox-zoom-out');
+const resetZoomBtn = lightboxModal.querySelector('.lightbox-reset-zoom');
+const counterSpan = lightboxModal.querySelector('.lightbox-counter');
+
+// Função global para abrir o visualizador (Galerias + Arte Secreta)
+window.openLightbox = function(imageElement) {
+    if (!imageElement) return;
+    ensureLightboxInBody();
+
     const section = imageElement.closest('section');
-    galleryImages = Array.from(section.querySelectorAll('.gallery-img'));
-    
-    // Encontra o índice da imagem clicada
-    currentImageIndex = galleryImages.indexOf(imageElement);
-    
-    // Exibe o modal
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Bloqueia scroll
-    
-    // Carrega a imagem
+    if (section && imageElement.classList.contains('gallery-img')) {
+        galleryImages = Array.from(section.querySelectorAll('.gallery-img'));
+        currentImageIndex = galleryImages.indexOf(imageElement);
+    } else {
+        galleryImages = [imageElement];
+        currentImageIndex = 0;
+    }
+
+    // Garante que fique acima de outros modais e abaixo do cursor customizado
+    document.body.appendChild(lightboxModal);
+    lightboxModal.style.setProperty('z-index', '999990', 'important');
+    closeBtn.style.setProperty('z-index', '999995', 'important');
+    prevBtn.style.setProperty('z-index', '999995', 'important');
+    nextBtn.style.setProperty('z-index', '999995', 'important');
+    lightboxModal.querySelector('.lightbox-controls').style.setProperty('z-index', '999995', 'important');
+
+    lightboxModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
     loadImage();
     resetZoom();
-}
+};
 
-// Função para fechar o lightbox
 function closeLightbox() {
-    modal.classList.remove('active');
-    document.body.style.overflow = ''; // Restaura scroll
-    zoomLevel = 1;
-    offsetX = 0;
-    offsetY = 0;
+    lightboxModal.classList.remove('active');
+    resetZoom();
+
+    const otherModalOpen = document.querySelector('.reward-modal.active, .secret-modal.active, .nav-menu.active');
+    if (!otherModalOpen) {
+        document.body.style.overflow = '';
+    }
 }
 
-// Função para carregar a imagem atual
 function loadImage() {
     const img = galleryImages[currentImageIndex];
+    if (!img) return;
+
     lightboxImage.src = img.src;
-    lightboxImage.alt = img.alt;
-    
-    // Atualiza o contador
+    lightboxImage.alt = img.alt || 'Arte';
     counterSpan.textContent = `${currentImageIndex + 1} / ${galleryImages.length}`;
-    
-    // Desabilita botões de navegação se necessário
-    prevBtn.disabled = currentImageIndex === 0;
-    nextBtn.disabled = currentImageIndex === galleryImages.length - 1;
+
+    prevBtn.disabled = currentImageIndex <= 0;
+    nextBtn.disabled = currentImageIndex >= galleryImages.length - 1;
 }
 
-// Função para ir para a próxima imagem
 function nextImage() {
     if (currentImageIndex < galleryImages.length - 1) {
         currentImageIndex++;
@@ -97,7 +118,6 @@ function nextImage() {
     }
 }
 
-// Função para voltar à imagem anterior
 function prevImage() {
     if (currentImageIndex > 0) {
         currentImageIndex--;
@@ -106,111 +126,141 @@ function prevImage() {
     }
 }
 
-// Função para aumentar zoom
+function updateZoomButtons() {
+    zoomOutBtn.disabled = zoomLevel <= MIN_ZOOM;
+    zoomInBtn.disabled = zoomLevel >= MAX_ZOOM;
+    resetZoomBtn.disabled = zoomLevel === MIN_ZOOM && offsetX === 0 && offsetY === 0;
+}
+
 function zoomIn() {
     if (zoomLevel < MAX_ZOOM) {
-        zoomLevel += ZOOM_STEP;
+        zoomLevel = Math.min(MAX_ZOOM, Math.round((zoomLevel + ZOOM_STEP) * 100) / 100);
+        clampOffsets();
         applyZoom();
     }
 }
 
-// Função para diminuir zoom
 function zoomOut() {
     if (zoomLevel > MIN_ZOOM) {
-        zoomLevel -= ZOOM_STEP;
+        zoomLevel = Math.max(MIN_ZOOM, Math.round((zoomLevel - ZOOM_STEP) * 100) / 100);
+        clampOffsets();
         applyZoom();
     }
 }
 
-// Função para resetar zoom
 function resetZoom() {
     zoomLevel = 1;
     offsetX = 0;
     offsetY = 0;
+    isDragging = false;
+    lightboxImage.style.transition = 'transform 0.2s ease';
     applyZoom();
 }
 
-// Função para aplicar o zoom à imagem
+function clampOffsets() {
+    if (zoomLevel <= 1) {
+        offsetX = 0;
+        offsetY = 0;
+        return;
+    }
+
+    const maxX = (lightboxImage.offsetWidth * (zoomLevel - 1)) / 2;
+    const maxY = (lightboxImage.offsetHeight * (zoomLevel - 1)) / 2;
+
+    offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
+    offsetY = Math.max(-maxY, Math.min(maxY, offsetY));
+}
+
 function applyZoom() {
-    lightboxImage.style.transform = `scale(${zoomLevel.toFixed(2)}) translate(${offsetX}px, ${offsetY}px)`;
+    lightboxImage.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${zoomLevel})`;
+    lightboxImage.style.cursor = zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default';
+    updateZoomButtons();
 }
 
 // =========================================================================
-// ZOOM COM MOUSE WHEEL (Scroll)
+// ZOOM COM SCROLL DO MOUSE
 // =========================================================================
-lightboxImage.addEventListener('wheel', (e) => {
+lightboxStage.addEventListener('wheel', (e) => {
     e.preventDefault();
-    
-    if (e.deltaY < 0) {
-        // Scroll para cima = Zoom In
-        zoomIn();
-    } else {
-        // Scroll para baixo = Zoom Out
-        zoomOut();
-    }
-});
+    if (e.deltaY < 0) zoomIn();
+    else zoomOut();
+}, { passive: false });
 
 // =========================================================================
-// ARRASTAR A IMAGEM (Drag and Drop)
+// ARRASTAR A IMAGEM (MOUSE + TOUCH CORRIGIDO PARA MOBILE)
 // =========================================================================
-lightboxImage.addEventListener('mousedown', (e) => {
-    // Só permite arrastar se estiver com zoom > 1
+function startDrag(clientX, clientY) {
     if (zoomLevel <= 1) return;
-    
     isDragging = true;
-    dragStartX = e.clientX - offsetX;
-    dragStartY = e.clientY - offsetY;
+    dragStartX = clientX - offsetX;
+    dragStartY = clientY - offsetY;
+    lightboxImage.style.transition = 'none';
     lightboxImage.style.cursor = 'grabbing';
-});
+}
 
-document.addEventListener('mousemove', (e) => {
+function moveDrag(clientX, clientY) {
     if (!isDragging || zoomLevel <= 1) return;
-    
-    const newOffsetX = e.clientX - dragStartX;
-    const newOffsetY = e.clientY - dragStartY;
-    
-    // Limita o movimento para não ultrapassar os limites
-    const maxOffset = (zoomLevel - 1) * 100;
-    offsetX = Math.max(-maxOffset, Math.min(maxOffset, newOffsetX));
-    offsetY = Math.max(-maxOffset, Math.min(maxOffset, newOffsetY));
-    
+    offsetX = clientX - dragStartX;
+    offsetY = clientY - dragStartY;
+    clampOffsets();
     applyZoom();
-});
+}
 
-document.addEventListener('mouseup', () => {
+function endDrag() {
+    if (!isDragging) return;
     isDragging = false;
-    if (zoomLevel > 1) {
-        lightboxImage.style.cursor = 'grab';
-    } else {
-        lightboxImage.style.cursor = 'default';
-    }
+    lightboxImage.style.transition = 'transform 0.2s ease';
+    lightboxImage.style.cursor = zoomLevel > 1 ? 'grab' : 'default';
+}
+
+lightboxImage.addEventListener('mousedown', (e) => {
+    if (zoomLevel <= 1) return;
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY);
 });
 
-// Atualiza o cursor quando entra/sai da imagem
-lightboxImage.addEventListener('mouseenter', () => {
-    if (zoomLevel > 1) {
-        lightboxImage.style.cursor = 'grab';
-    }
-});
+window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+window.addEventListener('mouseup', endDrag);
 
-lightboxImage.addEventListener('mouseleave', () => {
-    lightboxImage.style.cursor = 'default';
-    isDragging = false;
-});
+lightboxImage.addEventListener('touchstart', (e) => {
+    if (zoomLevel <= 1 || e.touches.length !== 1) return;
+    startDrag(e.touches[0].clientX, e.touches[0].clientY);
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    e.preventDefault();
+    moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+}, { passive: false });
+
+window.addEventListener('touchend', endDrag);
 
 // =========================================================================
-// EVENT LISTENERS
+// ABERTURA PARA GALERIAS E ARTE SECRETA (DESKTOP E MOBILE)
 // =========================================================================
-closeBtn.addEventListener('click', closeLightbox);
-prevBtn.addEventListener('click', prevImage);
-nextBtn.addEventListener('click', nextImage);
-zoomInBtn.addEventListener('click', zoomIn);
-zoomOutBtn.addEventListener('click', zoomOut);
-resetZoomBtn.addEventListener('click', resetZoom);
+function handleImageOpen(e) {
+    const targetImg = e.target.closest('.gallery-img, .secret-art-img');
+    if (!targetImg || targetImg.classList.contains('lightbox-image')) return;
 
-// Fechar ao clicar fora da imagem
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.openLightbox(targetImg);
+}
+
+document.addEventListener('click', handleImageOpen);
+
+// =========================================================================
+// EVENTOS DOS BOTÕES E FECHAMENTO
+// =========================================================================
+closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
+prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
+nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
+zoomInBtn.addEventListener('click', (e) => { e.stopPropagation(); zoomIn(); });
+zoomOutBtn.addEventListener('click', (e) => { e.stopPropagation(); zoomOut(); });
+resetZoomBtn.addEventListener('click', (e) => { e.stopPropagation(); resetZoom(); });
+
+lightboxModal.addEventListener('click', (e) => {
+    if (e.target === lightboxModal || e.target === lightboxStage) {
         closeLightbox();
     }
 });
@@ -219,9 +269,11 @@ modal.addEventListener('click', (e) => {
 // NAVEGAÇÃO COM TECLADO
 // =========================================================================
 document.addEventListener('keydown', (e) => {
-    if (!modal.classList.contains('active')) return;
-    
-    switch(e.key) {
+    if (!lightboxModal.classList.contains('active')) return;
+
+    e.stopImmediatePropagation();
+
+    switch (e.key) {
         case 'Escape':
             closeLightbox();
             break;
@@ -240,15 +292,16 @@ document.addEventListener('keydown', (e) => {
             zoomOut();
             break;
     }
-});
+}, true);
 
 // =========================================================================
-// INICIALIZAÇÃO
+// DELEGAÇÃO DE CLIQUE ÚNICA (Funciona para galerias e arte secreta)
 // =========================================================================
-document.addEventListener('DOMContentLoaded', () => {
-    const galleryImages = document.querySelectorAll('.gallery-img');
-    galleryImages.forEach(img => {
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', () => openLightbox(img));
-    });
+document.addEventListener('click', (e) => {
+    const targetImg = e.target.closest('.gallery-img, .secret-art-img');
+    if (!targetImg || targetImg.classList.contains('lightbox-image')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    window.openLightbox(targetImg);
 });
