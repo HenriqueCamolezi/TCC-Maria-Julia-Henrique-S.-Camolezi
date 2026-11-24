@@ -12,6 +12,39 @@
     try { Object.defineProperty(window, 'localStorage', { value: fake, configurable: true }); } catch (e) {}
 })();
 
+// =========================================================================
+// IMAGENS COM NOME ALTERNATIVO
+// Se a imagem da esquerda não existir na pasta, o site tenta as da direita, na ordem.
+// (Corrige a foto do Geto quando o nome do arquivo não bate com o que está no HTML.)
+// =========================================================================
+const imagensAlternativas = {
+    'Suguru Geto 2.jpg': ['Suguru Getou 2.jpg', 'Suguru Getou.jpg']
+};
+
+function imagemCarrega(url) {
+    return new Promise(resolve => {
+        const teste = new Image();
+        teste.onload = () => resolve(true);
+        teste.onerror = () => resolve(false);
+        teste.src = url;
+    });
+}
+
+async function usarPrimeiraImagemQueExistir(img, candidatas) {
+    for (const url of candidatas) {
+        if (await imagemCarrega(url)) {
+            if (img.getAttribute('src') !== url) img.src = url;
+            return;
+        }
+    }
+}
+
+document.querySelectorAll('img').forEach(img => {
+    const original = img.getAttribute('src');
+    const alternativas = imagensAlternativas[original];
+    if (alternativas) usarPrimeiraImagemQueExistir(img, [original, ...alternativas]);
+});
+
 // 1. GESTÃO DE TEMA (Pacto de Vinculação com LocalStorage)
 const themeToggleBtn = document.getElementById('theme-toggle');
 const body = document.body;
@@ -147,6 +180,7 @@ let isDeleting = false;
 const typistElement = document.getElementById('typist');
 
 function typeEffect() {
+    if (!typistElement) return; // as páginas de galeria não têm o texto digitado
     const currentWord = wordsToType[wordIndex];
     
     if (isDeleting) {
@@ -336,6 +370,7 @@ function initBackgroundEffects() {
         const isMobile = window.innerWidth <= 768;
 
         if (currentTheme === 'dark') {
+            if (isSukunaEnraged) return; // durante a expansão, só o loop da fúria gera cortes (evita travar o som)
             const amount = isMobile ? 2 : 4; // Menos partículas no celular
             for (let i = 0; i < amount; i++) {
                 createSlash(); // Invoca cortes se for Sukuna
@@ -772,9 +807,13 @@ secretBtn.addEventListener('click', precarregarTodosEfeitos, { once: true });
 // =========================================================================
 // ATIVAÇÃO SUKUNA (TEMA ESCURO) - VOLUMES SEPARADOS
 // =========================================================================
+let sukunaSessao = 0; // identifica cada execução: áudio/timer atrasado de uma execução antiga não mexe na nova
+
 function activateMalevolentShrine() {
     if (isSukunaEnraged || isGojoEnraged) return; 
     isSukunaEnraged = true;
+    const sessao = ++sukunaSessao;
+    const sessaoAtiva = () => isSukunaEnraged && sessao === sukunaSessao;
 
     // --- CONFIGURAÇÃO DE TEMPO ---
     const tempoCortes = 4000; // 4 segundos de massacre
@@ -810,29 +849,12 @@ function activateMalevolentShrine() {
         return audio;
     });
 
-    // Dá o play neles com um atraso de 250ms entre um e outro
-    sukunaSounds.forEach((audio, index) => {
-        setTimeout(() => {
-            if (isSukunaEnraged) {
-                audio.play().catch(e => {
-                    console.log('Áudio bloqueado:', e);
-                    if (index === 0) agendarFim(); // áudio bloqueado: encerra só o visual
-                });
-            }
-        }, index * 250); 
-    });
-    
-    // Reduz a música de fundo
     const bgMusic = document.getElementById('bg-music');
-    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
-
-    // Inicia a "chuva" de cortes visuais
-    rageInterval = setInterval(() => {
-        for (let i = 0; i < 5; i++) createSlash();
-    }, 120);
 
     // Quando o tempo configurado acabar:
     const finalizarSukuna = () => {
+        if (!sessaoAtiva()) return; // já encerrado (ou é de uma execução antiga): não faz nada
+
         document.body.classList.remove('sukuna-domain-active');
         if (greeting) greeting.innerHTML = originalGreeting;
         if (nameElement) nameElement.innerHTML = originalName;
@@ -849,18 +871,48 @@ function activateMalevolentShrine() {
 
         // Restaura a música de fundo
         if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
-        };
+    };
 
     // O tempo só começa a contar quando o áudio principal REALMENTE começa a tocar
     // (no celular ele demora a carregar e, antes, era cortado no meio).
     let fimAgendado = false;
     const agendarFim = () => {
-        if (fimAgendado) return;
+        if (fimAgendado || !sessaoAtiva()) return;
         fimAgendado = true;
         setTimeout(finalizarSukuna, tempoCortes);
     };
     sukunaSounds[0].addEventListener('playing', agendarFim, { once: true });
     setTimeout(agendarFim, 6000); // reserva, caso o áudio nunca comece
+
+    // Dá o play nos 3 áudios AGORA, ainda dentro do clique/Enter da pessoa.
+    // (Antes o play ficava dentro de setTimeout: o celular bloqueava ou atrasava o som,
+    //  e os 3 efeitos saíam fora de sincronia.)
+    // O atraso de 250ms entre um e outro é feito "destampando" o som (muted),
+    // então os dois cortes já estão tocando, só entram com 250ms/500ms de diferença.
+    sukunaSounds.forEach((audio, index) => {
+        if (index > 0) audio.muted = true;
+
+        const promessa = audio.play();
+        if (promessa) {
+            promessa.catch(e => {
+                if (e && e.name === 'AbortError') return; // interrompido ao encerrar o efeito: normal
+                console.log('Áudio bloqueado:', e);
+                if (index === 0) agendarFim(); // áudio bloqueado: encerra só o visual
+            });
+        }
+
+        if (index > 0) {
+            setTimeout(() => { if (sessaoAtiva()) audio.muted = false; }, index * 250);
+        }
+    });
+    
+    // Reduz a música de fundo
+    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
+
+    // Inicia a "chuva" de cortes visuais
+    rageInterval = setInterval(() => {
+        for (let i = 0; i < 5; i++) createSlash();
+    }, 120);
 }
 
 // =========================================================================

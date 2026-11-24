@@ -293,15 +293,3 @@ document.addEventListener('keydown', (e) => {
             break;
     }
 }, true);
-
-// =========================================================================
-// DELEGAÇÃO DE CLIQUE ÚNICA (Funciona para galerias e arte secreta)
-// =========================================================================
-document.addEventListener('click', (e) => {
-    const targetImg = e.target.closest('.gallery-img, .secret-art-img');
-    if (!targetImg || targetImg.classList.contains('lightbox-image')) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    window.openLightbox(targetImg);
-});
