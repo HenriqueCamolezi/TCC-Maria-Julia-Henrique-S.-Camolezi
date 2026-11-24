@@ -1,3 +1,17 @@
+// 0. PROTEÇÃO: se o navegador bloquear o localStorage (arquivo local, modo privado),
+//    usa a memória no lugar, para o script não travar e o site continuar funcionando.
+(function () {
+    try { window.localStorage.getItem('__teste'); return; } catch (e) {}
+    const mem = {};
+    const fake = {
+        getItem: k => (k in mem ? mem[k] : null),
+        setItem: (k, v) => { mem[k] = String(v); },
+        removeItem: k => { delete mem[k]; },
+        clear: () => { for (const k in mem) delete mem[k]; }
+    };
+    try { Object.defineProperty(window, 'localStorage', { value: fake, configurable: true }); } catch (e) {}
+})();
+
 // 1. GESTÃO DE TEMA (Pacto de Vinculação com LocalStorage)
 const themeToggleBtn = document.getElementById('theme-toggle');
 const body = document.body;
