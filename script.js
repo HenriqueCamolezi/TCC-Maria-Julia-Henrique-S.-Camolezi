@@ -741,6 +741,35 @@ window.createSlash = function() {
 };
 
 // =========================================================================
+// EFEITOS SONOROS - PRÉ-CARREGAMENTO (para tocarem INTEIROS no celular)
+// =========================================================================
+const urlsEfeitos = {}; // arquivo -> endereço do áudio já baixado na memória
+const efeitosEmCarga = {};
+
+function precarregarEfeito(arquivo) {
+    if (efeitosEmCarga[arquivo]) return;
+    efeitosEmCarga[arquivo] = fetch(arquivo)
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
+        .then(blob => { urlsEfeitos[arquivo] = URL.createObjectURL(blob); })
+        .catch(() => { /* se falhar, o áudio carrega normalmente na hora de tocar */ });
+}
+
+function precarregarTodosEfeitos() {
+    ['sukuna domain expansion sound effect.mp3', 'sukuna-slash.mp3', 'sukuna-slash2.mp3', 'gojo-purple.mp3']
+        .forEach(precarregarEfeito);
+}
+
+function criarEfeito(arquivo, volume) {
+    const audio = new Audio(urlsEfeitos[arquivo] || arquivo);
+    audio.preload = 'auto';
+    audio.volume = volume;
+    return audio;
+}
+
+// Começa a baixar os efeitos assim que a pessoa abre o botão secreto "?"
+secretBtn.addEventListener('click', precarregarTodosEfeitos, { once: true });
+
+// =========================================================================
 // ATIVAÇÃO SUKUNA (TEMA ESCURO) - VOLUMES SEPARADOS
 // =========================================================================
 function activateMalevolentShrine() {
@@ -776,8 +805,7 @@ function activateMalevolentShrine() {
 
     // Transforma a sua configuração acima em áudios reais
     const sukunaSounds = configuracaoSons.map(config => {
-        const audio = new Audio(config.arquivo);
-        audio.volume = config.volume; // Aplica o volume específico daquele arquivo!
+        const audio = criarEfeito(config.arquivo, config.volume); // volume específico de cada arquivo
         audio.loop = true;
         return audio;
     });
@@ -786,7 +814,10 @@ function activateMalevolentShrine() {
     sukunaSounds.forEach((audio, index) => {
         setTimeout(() => {
             if (isSukunaEnraged) {
-                audio.play().catch(e => console.log('Áudio bloqueado:', e));
+                audio.play().catch(e => {
+                    console.log('Áudio bloqueado:', e);
+                    if (index === 0) agendarFim(); // áudio bloqueado: encerra só o visual
+                });
             }
         }, index * 250); 
     });
@@ -801,7 +832,7 @@ function activateMalevolentShrine() {
     }, 120);
 
     // Quando o tempo configurado acabar:
-    setTimeout(() => {
+    const finalizarSukuna = () => {
         document.body.classList.remove('sukuna-domain-active');
         if (greeting) greeting.innerHTML = originalGreeting;
         if (nameElement) nameElement.innerHTML = originalName;
@@ -818,7 +849,18 @@ function activateMalevolentShrine() {
 
         // Restaura a música de fundo
         if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
-    }, tempoCortes); 
+        };
+
+    // O tempo só começa a contar quando o áudio principal REALMENTE começa a tocar
+    // (no celular ele demora a carregar e, antes, era cortado no meio).
+    let fimAgendado = false;
+    const agendarFim = () => {
+        if (fimAgendado) return;
+        fimAgendado = true;
+        setTimeout(finalizarSukuna, tempoCortes);
+    };
+    sukunaSounds[0].addEventListener('playing', agendarFim, { once: true });
+    setTimeout(agendarFim, 6000); // reserva, caso o áudio nunca comece
 }
 
 // =========================================================================
@@ -849,8 +891,8 @@ function activateHollowPurple() {
     if(nameElement) nameElement.innerHTML = "Vazio <span>Roxo</span>";
 
     // --- EFEITO SONORO DO GOJO ---
-    const gojoAudio = new Audio('gojo-purple.mp3'); // Coloque o nome do seu arquivo MP3 aqui
-    gojoAudio.volume = 1.0;
+    const gojoAudio = criarEfeito('gojo-purple.mp3', 1.0); // Coloque o nome do seu arquivo MP3 aqui
+    window.efeitoGojoAtual = gojoAudio; // guarda uma referência para o áudio não ser descartado no meio
     gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
     
     // Abaixa a música de fundo
@@ -1161,6 +1203,9 @@ function showRewardModal(text, imageUrl) {
     modal.querySelector('.reward-close').addEventListener('click', () => {
         modal.classList.remove('active');
         setTimeout(() => modal.remove(), 300);
+        // Libera a rolagem por toque (o visualizador de imagem pode ter deixado travada)
+        if (typeof window.liberarRolagem === 'function') window.liberarRolagem();
+        else document.body.style.overflow = '';
     });
 }
 
