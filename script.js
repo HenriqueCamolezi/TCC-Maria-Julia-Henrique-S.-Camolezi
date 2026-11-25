@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Se não encontrar o áudio na página, interrompe para não dar erro
     if (!bgMusic) return;
 
-    bgMusic.volume = 0.02; // Define o volume (2%)
+    bgMusic.volume = 0.50;
     
     // 1. Restaura o tempo da música salvo no navegador
     const savedTime = localStorage.getItem('music-time');
