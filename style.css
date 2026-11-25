@@ -352,15 +352,16 @@ section {
 
 .aura-glow {
     position: absolute;
-    width: 80%;
-    height: 80%;
-    background: var(--accent-primary);
-    filter: blur(80px);
-    opacity: 0.3;
+    width: 65%;
+    height: 65%;
+    background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+    filter: blur(55px);
+    opacity: 0.25;
     z-index: 1;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    pointer-events: none;
     animation: pulse 4s infinite alternate;
 }
 

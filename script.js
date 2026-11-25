@@ -18,7 +18,7 @@
 // (Corrige a foto do Geto quando o nome do arquivo não bate com o que está no HTML.)
 // =========================================================================
 const imagensAlternativas = {
-    'Suguru Geto 2.jpg': ['Suguru Getou 2.jpg', 'Suguru Getou.jpg']
+    'Suguru geto 2.jpg': ['Suguru Getou 2.jpg', 'Suguru Getou.jpg']
 };
 
 function imagemCarrega(url) {
