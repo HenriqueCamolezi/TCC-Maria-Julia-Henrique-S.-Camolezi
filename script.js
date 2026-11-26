@@ -441,7 +441,7 @@ window.addEventListener('popstate', () => {
 });
 
 // =========================================================================
-// MÚSICA DE BACKGROUND (Por Página)
+// MÚSICA DE BACKGROUND (Compatível com Desktop e Mobile)
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const bgMusic = document.getElementById('bg-music');
@@ -453,42 +453,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const MUSICA_HOME = 'King Gnu - SPECIALZ.mp3';       // Música para o index.html
     const MUSICA_GALERIA = 'Where Our Blue Is ⧸ Tatsuya Kitani.mp3';  // Música para Gojo e Geto
 
-    // Verifica em qual página o visitante está
+    // Identifica se está na página inicial ou nas galerias
     const caminho = window.location.pathname.toLowerCase();
-    const isGaleria = caminho.includes('galeria-gojo') || caminho.includes('galeria-geto');
+    const isGaleria = caminho.includes('galeria') || Boolean(document.querySelector('.gallery-header'));
 
-    // Define a música e uma chave própria para salvar o tempo de cada uma
     const musicaEscolhida = isGaleria ? MUSICA_GALERIA : MUSICA_HOME;
     const chaveTempo = isGaleria ? 'music-time-galeria' : 'music-time-home';
 
-    // Troca o arquivo de áudio antes de iniciar
+    // Limpa tags <source> antigas (se existirem) e carrega o novo áudio
+    bgMusic.innerHTML = '';
     bgMusic.src = musicaEscolhida;
+    bgMusic.preload = 'auto';
     bgMusic.volume = 0.20;
+    bgMusic.load();
 
-    // 2. Restaura o tempo salvo específico da música atual
-    const savedTime = localStorage.getItem(chaveTempo);
-    if (savedTime) {
-        const time = parseFloat(savedTime);
-        if (!isNaN(time)) {
-            bgMusic.currentTime = time;
+    // 2. Restaura o tempo salvo APENAS quando o celular carregar o áudio
+    let tempoRestaurado = false;
+    function restaurarTempo() {
+        if (tempoRestaurado) return;
+        const savedTime = localStorage.getItem(chaveTempo);
+        if (savedTime) {
+            const time = parseFloat(savedTime);
+            if (!isNaN(time) && time > 0) {
+                try {
+                    bgMusic.currentTime = time;
+                } catch (e) {}
+            }
         }
+        tempoRestaurado = true;
     }
+
+    bgMusic.addEventListener('loadedmetadata', restaurarTempo);
 
     // 3. Salva continuamente o progresso da música atual
     bgMusic.addEventListener('timeupdate', () => {
-        localStorage.setItem(chaveTempo, bgMusic.currentTime);
+        if (!bgMusic.paused && bgMusic.currentTime > 0) {
+            localStorage.setItem(chaveTempo, bgMusic.currentTime);
+        }
     });
 
     let musicEnabled = localStorage.getItem('music-playing') !== 'false';
 
+    function removerOuvintes() {
+        document.removeEventListener('click', initMusic);
+        document.removeEventListener('touchend', initMusic);
+        document.removeEventListener('keydown', initMusic);
+    }
+
     async function playMusic() {
         try {
+            if (bgMusic.readyState >= 1) {
+                restaurarTempo();
+            }
             await bgMusic.play();
             musicEnabled = true;
             localStorage.setItem('music-playing', 'true');
             if (musicToggle) musicToggle.classList.add('active');
+            // Só remove os eventos depois que o áudio realmente começar a tocar
+            removerOuvintes();
         } catch (err) {
-            console.log('Autoplay bloqueado pelo navegador, aguardando interação do usuário.');
             if (musicToggle) musicToggle.classList.remove('active');
         }
     }
@@ -498,27 +521,28 @@ document.addEventListener('DOMContentLoaded', () => {
         musicEnabled = false;
         localStorage.setItem('music-playing', 'false');
         if (musicToggle) musicToggle.classList.remove('active');
+        removerOuvintes();
     }
 
     function initMusic() {
         if (musicEnabled) {
             playMusic();
         }
-        document.removeEventListener('click', initMusic);
-        document.removeEventListener('touchstart', initMusic);
-        document.removeEventListener('keydown', initMusic);
     }
 
+    // Tenta iniciar ao carregar (funciona no PC e se o celular já tiver permissão)
     if (musicEnabled) {
         playMusic();
-    } else {
-        if (musicToggle) musicToggle.classList.remove('active');
+    } else if (musicToggle) {
+        musicToggle.classList.remove('active');
     }
 
+    // No mobile, 'touchend' e 'click' são aceitos como toque válido para liberar áudio
     document.addEventListener('click', initMusic);
-    document.addEventListener('touchstart', initMusic);
+    document.addEventListener('touchend', initMusic);
     document.addEventListener('keydown', initMusic);
 
+    // Botão flutuante de Tocar/Pausar
     if (musicToggle) {
         musicToggle.addEventListener('click', (e) => {
             e.stopPropagation();
