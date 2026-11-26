@@ -441,35 +441,46 @@ window.addEventListener('popstate', () => {
 });
 
 // =========================================================================
-// MÚSICA DE BACKGROUND
+// MÚSICA DE BACKGROUND (Por Página)
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const bgMusic = document.getElementById('bg-music');
     const musicToggle = document.getElementById('music-toggle');
 
-    // Se não encontrar o áudio na página, interrompe para não dar erro
     if (!bgMusic) return;
 
+    // 1. CONFIGURE AQUI OS NOMES DOS SEUS ARQUIVOS DE ÁUDIO (.mp3)
+    const MUSICA_HOME = 'King Gnu - SPECIALZ.mp3';       // Música para o index.html
+    const MUSICA_GALERIA = 'Where Our Blue Is ⧸ Tatsuya Kitani.mp3';  // Música para Gojo e Geto
+
+    // Verifica em qual página o visitante está
+    const caminho = window.location.pathname.toLowerCase();
+    const isGaleria = caminho.includes('galeria-gojo') || caminho.includes('galeria-geto');
+
+    // Define a música e uma chave própria para salvar o tempo de cada uma
+    const musicaEscolhida = isGaleria ? MUSICA_GALERIA : MUSICA_HOME;
+    const chaveTempo = isGaleria ? 'music-time-galeria' : 'music-time-home';
+
+    // Troca o arquivo de áudio antes de iniciar
+    bgMusic.src = musicaEscolhida;
     bgMusic.volume = 0.20;
-    
-    // 1. Restaura o tempo da música salvo no navegador
-    const savedTime = localStorage.getItem('music-time');
+
+    // 2. Restaura o tempo salvo específico da música atual
+    const savedTime = localStorage.getItem(chaveTempo);
     if (savedTime) {
         const time = parseFloat(savedTime);
         if (!isNaN(time)) {
             bgMusic.currentTime = time;
         }
     }
-    
-    // 2. Salva continuamente o progresso da música
+
+    // 3. Salva continuamente o progresso da música atual
     bgMusic.addEventListener('timeupdate', () => {
-        localStorage.setItem('music-time', bgMusic.currentTime);
+        localStorage.setItem(chaveTempo, bgMusic.currentTime);
     });
 
-    // Por padrão a música é habilitada, a não ser que o usuário a tenha pausado
     let musicEnabled = localStorage.getItem('music-playing') !== 'false';
 
-    // Função para tocar a música
     async function playMusic() {
         try {
             await bgMusic.play();
@@ -482,7 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Função para pausar a música
     function pauseMusic() {
         bgMusic.pause();
         musicEnabled = false;
@@ -490,33 +500,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (musicToggle) musicToggle.classList.remove('active');
     }
 
-    // Tenta tocar a música na primeira interação na tela
     function initMusic() {
         if (musicEnabled) {
             playMusic();
         }
-        // Remove os eventos após a primeira interação
         document.removeEventListener('click', initMusic);
         document.removeEventListener('touchstart', initMusic);
         document.removeEventListener('keydown', initMusic);
     }
 
-    // Logo ao carregar, tenta tocar a música
     if (musicEnabled) {
         playMusic();
     } else {
         if (musicToggle) musicToggle.classList.remove('active');
     }
 
-    // Escuta a primeira interação na tela inteira
     document.addEventListener('click', initMusic);
     document.addEventListener('touchstart', initMusic);
     document.addEventListener('keydown', initMusic);
 
-    // Lógica do botão de Tocar/Pausar
     if (musicToggle) {
         musicToggle.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evita conflito com o clique da tela
+            e.stopPropagation();
             if (bgMusic.paused) {
                 playMusic();
             } else {
