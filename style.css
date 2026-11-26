@@ -2314,3 +2314,31 @@ body.sukuna-domain-active img {
         padding: 40px 0 70px;
     }
 }
+
+/* =========================================================================
+   PROTEÇÃO DE IMAGENS E CONTRA PRINTS
+   ========================================================================= */
+
+/* Bloqueia menu ao segurar o dedo (iOS/Android) e seleção de imagens */
+img {
+    -webkit-touch-callout: none !important; /* Impede menu ao segurar o dedo no iPhone/Android */
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    -webkit-user-drag: none !important;
+}
+
+/* Efeito de censura/borrão quando a janela perde foco (Ferramenta de Recorte / Print) */
+body.anti-print-blur {
+    filter: blur(25px) brightness(0.2) !important;
+    transition: filter 0.1s ease !important;
+    pointer-events: none !important;
+}
+
+/* Deixa a página totalmente preta se tentarem usar Ctrl+P ou Salvar como PDF */
+@media print {
+    html, body {
+        display: none !important;
+    }
+}

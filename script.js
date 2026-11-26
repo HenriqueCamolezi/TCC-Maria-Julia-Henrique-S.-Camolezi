@@ -1390,3 +1390,85 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(style);
     }
 });
+
+// =========================================================================
+// PROTEÇÃO DE IMAGENS E DETECÇÃO DE CAPTURA DE TELA (PC E MOBILE)
+// =========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Impede o atributo draggable em todas as imagens atuais e futuras
+    function protegerImagens() {
+        document.querySelectorAll('img').forEach(img => {
+            img.setAttribute('draggable', 'false');
+        });
+    }
+    protegerImagens();
+
+    // Observa imagens criadas dinamicamente (como a Arte Secreta e o Lightbox)
+    const obsImagens = new MutationObserver(protegerImagens);
+    obsImagens.observe(document.body, { childList: true, subtree: true });
+
+    // 2. Bloqueia clique direito (PC) e menu de segurar o dedo (Mobile) nas imagens
+    document.addEventListener('contextmenu', (e) => {
+        if (e.target.tagName === 'IMG' || e.target.closest('.gallery-item, .lightbox-stage, .secret-art-container, .project-img-container')) {
+            e.preventDefault();
+            return false;
+        }
+    }, true);
+
+    // 3. Impede arrastar a imagem para outra aba ou para a área de trabalho
+    document.addEventListener('dragstart', (e) => {
+        if (e.target.tagName === 'IMG') {
+            e.preventDefault();
+            return false;
+        }
+    }, true);
+
+    // 4. Bloqueia atalhos de teclado (PrintScreen, Ctrl+S, Ctrl+P, Ctrl+U, F12)
+    document.addEventListener('keydown', (e) => {
+        const tecla = e.key.toLowerCase();
+
+        // Bloqueia PrintScreen
+        if (e.key === 'PrintScreen') {
+            e.preventDefault();
+            ativarEscudoPrint(1500);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText('').catch(() => {});
+            }
+        }
+
+        // Bloqueia Ctrl+S (Salvar), Ctrl+P (Imprimir), Ctrl+U (Código-fonte) e Ctrl+Shift+I/S
+        if ((e.ctrlKey || e.metaKey) && (tecla === 's' || tecla === 'p' || tecla === 'u')) {
+            e.preventDefault();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (tecla === 'i' || tecla === 's' || tecla === 'c')) {
+            e.preventDefault();
+        }
+    });
+
+    // 5. Escudo visual contra Ferramenta de Captura (Win+Shift+S) e troca de aba no Mobile
+    function ativarEscudoPrint(tempoMs = 0) {
+        document.body.classList.add('anti-print-blur');
+        if (tempoMs > 0) {
+            setTimeout(() => {
+                document.body.classList.remove('anti-print-blur');
+            }, tempoMs);
+        }
+    }
+
+    // Borra a tela imediatamente quando a aba perde foco (ex: abrir ferramenta de print ou menu do celular)
+    window.addEventListener('blur', () => {
+        ativarEscudoPrint();
+    });
+
+    window.addEventListener('focus', () => {
+        document.body.classList.remove('anti-print-blur');
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            ativarEscudoPrint();
+        } else {
+            document.body.classList.remove('anti-print-blur');
+        }
+    });
+});
