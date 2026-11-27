@@ -1793,6 +1793,23 @@ document.addEventListener('DOMContentLoaded', () => {
 // =========================================================================
 // EASTER EGG: EFEITO BLACK FLASH (CLIQUE DUPLO NA TELA)
 // =========================================================================
+
+// --- SOM DO BLACK FLASH ---
+// O arquivo kokusen.mp3 deve ficar na mesma pasta do index.html
+const KOKUSEN_ARQUIVO = 'kokusen.mp3';
+const KOKUSEN_VOLUME = 1.0; // de 0.0 (mudo) até 1.0 (máximo)
+
+const kokusenBase = new Audio(encodeURI(KOKUSEN_ARQUIVO));
+kokusenBase.preload = 'auto'; // já deixa o som carregado para tocar sem atraso
+
+function tocarKokusen() {
+    // Cria uma cópia a cada golpe: se você der cliques duplos em sequência,
+    // os sons se sobrepõem em vez de um cortar o outro
+    const som = new Audio(kokusenBase.src);
+    som.volume = KOKUSEN_VOLUME;
+    som.play().catch(err => console.log('Áudio do Black Flash bloqueado:', err));
+}
+
 document.addEventListener('dblclick', (e) => {
     // Evita disparar ao clicar dentro de modais, botões ou imagens da galeria
     if (e.target.closest('button, a, input, .lightbox-modal, .secret-modal, .reward-modal, .gallery-img')) {
@@ -1816,6 +1833,7 @@ document.addEventListener('dblclick', (e) => {
 
     document.body.appendChild(flashContainer);
     document.body.classList.add('black-flash-hit');
+    tocarKokusen(); // 🔊 som do Black Flash
 
     setTimeout(() => {
         document.body.classList.remove('black-flash-hit');
