@@ -2439,3 +2439,336 @@ body.anti-print-blur {
         padding: 8px 16px;
     }
 }
+
+/* =========================================================================
+   EFEITO BLACK FLASH (FULGOR NEGRO)
+========================================================================= */
+.black-flash-container {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    pointer-events: none;
+    z-index: 999999;
+    animation: blackFlashPop 0.55s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+.black-flash-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: #000000;
+    border: 3px solid #ff0000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 25px #ff0000, 0 0 50px #8b0000, inset 0 0 15px #ff0000;
+}
+
+.black-flash-bolt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 6px #ff0000) drop-shadow(0 0 14px #ff0000);
+}
+
+body.black-flash-hit {
+    animation: blackFlashImpact 0.25s ease-out;
+}
+
+@keyframes blackFlashPop {
+    0% { transform: translate(-50%, -50%) scale(0.2) rotate(0deg); opacity: 1; }
+    40% { transform: translate(-50%, -50%) scale(1.3) rotate(15deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.6) rotate(25deg); opacity: 0; }
+}
+
+@keyframes blackFlashImpact {
+    0% { filter: invert(1) contrast(200%); transform: translate(-4px, 4px); }
+    50% { filter: invert(0.8) contrast(150%); transform: translate(4px, -4px); }
+    100% { filter: none; transform: translate(0, 0); }
+}
+
+/* =========================================================================
+   EASTER EGG: SUGURU GETO - TÉCNICA MÁXIMA: UZUMAKI (3 FASES)
+========================================================================= */
+
+/* Tremor de tela durante o disparo (aplicado no main/header para não quebrar position: fixed) */
+body.geto-domain-active main,
+body.geto-domain-active header {
+    animation: getoTremor 0.08s infinite alternate;
+    filter: contrast(125%) saturate(130%);
+}
+
+@keyframes getoTremor {
+    0% { transform: translate(6px, -4px) rotate(0.8deg); }
+    100% { transform: translate(-6px, 4px) rotate(-0.8deg); }
+}
+
+/* FASE 1: Espíritos Amaldiçoados sendo absorvidos */
+.geto-spirit {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #3c096c 10%, #10002b 65%, #000000 100%);
+    border: 2px solid #9d4edd;
+    box-shadow: 0 0 20px #7b2cbf, inset 0 0 12px #000;
+    z-index: 99998;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spiritConverge 1.3s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+/* Olhos das maldições dentro das esferas */
+.geto-spirit::before,
+.geto-spirit::after {
+    content: '';
+    width: 7px;
+    height: 4px;
+    background: #ff0055;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ff0055;
+    margin: 0 3px;
+}
+
+/* Maldições de Semi-Classe 1 ou Superior (Aura Dourada/Carmesim) */
+.geto-spirit.high-grade {
+    width: 62px;
+    height: 62px;
+    border-color: #ffbe0b;
+    box-shadow: 0 0 28px #9d4edd, 0 0 15px #ffbe0b;
+}
+
+@keyframes spiritConverge {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(0.15);
+        opacity: 0.9;
+    }
+}
+
+/* FASE 2: Redemoinho Espiral Uzumaki */
+.geto-uzumaki-vortex {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: repeating-conic-gradient(
+        from 0deg,
+        #030005 0deg 12deg,
+        #240046 12deg 24deg,
+        #5a189a 24deg 30deg,
+        #000000 30deg 45deg
+    );
+    box-shadow: 
+        0 0 50px #7b2cbf,
+        0 0 110px #3c096c,
+        inset 0 0 60px #000000;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 99999;
+    pointer-events: none;
+    animation: uzumakiCondense 1.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Núcleo negro central do redemoinho */
+.geto-uzumaki-vortex::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 35%;
+    height: 35%;
+    background: radial-gradient(circle, #000000 60%, #9d4edd 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 30px #000;
+}
+
+@keyframes uzumakiCondense {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(1.15) rotate(360deg);
+        opacity: 1;
+    }
+    75% {
+        transform: translate(-50%, -50%) scale(0.95) rotate(900deg);
+        opacity: 1;
+    }
+    92% {
+        /* Supercondensação antes do disparo */
+        transform: translate(-50%, -50%) scale(0.25) rotate(1200deg);
+        filter: brightness(2.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0) rotate(1440deg);
+        opacity: 0;
+    }
+}
+
+/* Extração de Técnica Inata (Selos/Runas saindo do vórtice) */
+.geto-extracted-seal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    padding: 6px 14px;
+    background: rgba(16, 0, 43, 0.9);
+    border: 1px solid #ffbe0b;
+    color: #ffbe0b;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    box-shadow: 0 0 15px #ffbe0b, 0 0 30px #9d4edd;
+    z-index: 100001;
+    pointer-events: none;
+    animation: extractTechnique 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes extractTechnique {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.1);
+        opacity: 0;
+    }
+}
+
+/* FASE 3: Explosão de Energia Supercondensada */
+.geto-uzumaki-blast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, #e0aaff 20%, #7b2cbf 45%, #10002b 75%, transparent 100%);
+    box-shadow: 0 0 100px #9d4edd, 0 0 220px #5a189a, 0 0 350px #000000;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 100000;
+    pointer-events: none;
+    animation: uzumakiBlast 1.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+.geto-blast-flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #e0aaff 0%, #240046 60%, #000000 100%);
+    z-index: 99997;
+    opacity: 0;
+    pointer-events: none;
+    animation: getoScreenFlash 1.4s ease-out forwards;
+}
+
+@keyframes uzumakiBlast {
+    0% {
+        transform: translate(-50%, -50%) scale(0.1);
+        opacity: 1;
+    }
+    25% {
+        transform: translate(-50%, -50%) scale(12);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(45);
+        opacity: 0;
+    }
+}
+
+@keyframes getoScreenFlash {
+    0% { opacity: 0; }
+    15% { opacity: 0.95; }
+    100% { opacity: 0; }
+}
+
+/* =========================================================================
+   PARTÍCULAS E ONDAS DE CHOQUE DA EXPLOSÃO DO UZUMAKI
+========================================================================= */
+.geto-shockwave {
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    width: 60px;
+    height: 60px;
+    box-sizing: content-box;
+    border-radius: 50%;
+    border: 14px solid #c77dff;
+    box-shadow: 0 0 35px #9d4edd, inset 0 0 25px #5a189a;
+    transform: translate(-50%, -50%) scale(0.2);
+    z-index: 100003;
+    pointer-events: none;
+    animation: getoShockwaveExpand 1.2s cubic-bezier(0.1, 0.85, 0.2, 1) forwards;
+}
+
+@keyframes getoShockwaveExpand {
+    0% {
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 1;
+        border-width: 18px;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(22);
+        opacity: 0;
+        border-width: 2px;
+    }
+}
+
+.geto-explosion-particle {
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 15%, #e0aaff 45%, #7b2cbf 85%, #240046 100%);
+    box-shadow: 0 0 14px #c77dff, 0 0 28px #7b2cbf;
+    z-index: 100004;
+    pointer-events: none;
+    animation: getoParticleFly var(--dur, 1.2s) cubic-bezier(0.12, 0.85, 0.25, 1) forwards;
+}
+
+/* Partículas densas de energia negra/roxa */
+.geto-explosion-particle.dark-cursed {
+    background: radial-gradient(circle, #9d4edd 20%, #240046 65%, #000000 100%);
+    border: 1px solid #e0aaff;
+    box-shadow: 0 0 16px #5a189a, 0 0 30px #000000;
+}
+
+@keyframes getoParticleFly {
+    0% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 1;
+    }
+    75% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.1);
+        opacity: 0;
+    }
+}

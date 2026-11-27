@@ -379,22 +379,23 @@ function createGojoParticle() {
 // Controlador Principal de Efeitos
 function initBackgroundEffects() {
     setInterval(() => {
+        // ECONOMIA DE BATERIA: Não gera partículas se a aba estiver minimizada ou em segundo plano
+        if (document.hidden) return;
+
         const currentTheme = document.body.getAttribute('data-theme');
         const isMobile = window.innerWidth <= 768;
 
         if (currentTheme === 'dark') {
-            if (isSukunaEnraged) return; // durante a expansão, só o loop da fúria gera cortes (evita travar o som)
-            const amount = isMobile ? 2 : 4; // Menos partículas no celular
+            if (isSukunaEnraged) return;
+            const amount = isMobile ? 2 : 4;
             for (let i = 0; i < amount; i++) {
-                createSlash(); // Invoca cortes se for Sukuna
+                createSlash();
             }
         } else {
-            // Tema Claro (Gojo): Quantidade de bolas significativamente reduzida
-            // Só gera em cerca de 25% das vezes e apenas 1 partícula por vez
             if (Math.random() > 0.75) {
                 const amount = isMobile ? 1 : 1;
                 for (let i = 0; i < amount; i++) {
-                    createGojoParticle(); // Invoca esferas se for Gojo
+                    createGojoParticle();
                 }
             }
         }
@@ -719,6 +720,7 @@ document.head.appendChild(styleFix);
 
 let isSukunaEnraged = false;
 let isGojoEnraged = false;
+let isGetoEnraged = false;
 let originalGreeting = "";
 let originalName = "";
 let rageInterval = null;
@@ -842,7 +844,7 @@ async function precarregarEfeito(arquivo) {
 }
 
 function precarregarTodosEfeitos() {
-    ['sukuna-slash.mp3', 'sukuna-slash2.mp3', 'gojo-purple.mp3']
+    ['sukuna-slash.mp3', 'sukuna-slash2.mp3', 'gojo-purple.mp3', 'hurricane sound effect.mp3']
         .forEach(precarregarEfeito);
 }
 
@@ -1136,26 +1138,221 @@ function activateHollowPurple() {
 }
 
 // =========================================================================
-// VERIFICAÇÃO DO CÓDIGO
+// ATIVAÇÃO GETO - TÉCNICA MÁXIMA: UZUMAKI (REUTILIZÁVEL SEM F5)
+// =========================================================================
+let getoSessao = 0;
+
+function activateGetoUzumaki() {
+    if (isSukunaEnraged || isGojoEnraged || isGetoEnraged) return;
+    isGetoEnraged = true;
+
+    const sessao = ++getoSessao;
+    const sessaoAtiva = () => isGetoEnraged && sessao === getoSessao;
+
+    const greeting = document.querySelector('.greeting');
+    const nameElement = document.querySelector('.name');
+
+    if (greeting && !originalGreeting) originalGreeting = greeting.innerHTML;
+    if (nameElement && !originalName) originalName = nameElement.innerHTML;
+
+    if (greeting) greeting.textContent = "TÉCNICA MÁXIMA:";
+    if (nameElement) nameElement.innerHTML = "Uzumaki <span>Espiral</span>";
+
+    // --- 1. ÁUDIO DO FURACÃO ---
+    const hurricaneAudio = criarEfeito('hurricane.mp3', 1.0);
+    hurricaneAudio.play().catch(e => console.log('Áudio bloqueado:', e));
+
+    // --- 2. ÁUDIO DA EXPLOSÃO (DESTRAVADO MUDO NO CLIQUE) ---
+    const gojoAudio = criarEfeito('gojo-purple.mp3', 1.0);
+    gojoAudio.muted = true;
+    gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
+    window.efeitoGojoAtual = gojoAudio;
+
+    const bgMusic = document.getElementById('bg-music');
+    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
+
+    const createdElements = [];
+    let finalizado = false;
+
+    // Função única de encerramento (garante que sempre destrave)
+    const finalizarGeto = () => {
+        if (finalizado || sessao !== getoSessao) return;
+        finalizado = true;
+
+        try {
+            document.body.classList.remove('geto-domain-active');
+            createdElements.forEach(el => el.remove());
+
+            hurricaneAudio.pause();
+            hurricaneAudio.currentTime = 0;
+
+            gojoAudio.pause();
+            gojoAudio.currentTime = 0;
+
+            if (greeting) greeting.innerHTML = originalGreeting;
+            if (nameElement) nameElement.innerHTML = originalName;
+            if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
+        } finally {
+            isGetoEnraged = false;
+        }
+    };
+
+    // Garantia extra: destrava após 4.6s mesmo se algum timer falhar
+    setTimeout(finalizarGeto, 4600);
+
+    // --- FASE 1: FUSÃO DE ESPÍRITOS AMALDIÇOADOS ---
+    const totalSpirits = 22;
+    for (let i = 0; i < totalSpirits; i++) {
+        const spirit = document.createElement('div');
+        const isHighGrade = i % 5 === 0;
+        spirit.className = isHighGrade ? 'geto-spirit high-grade' : 'geto-spirit';
+
+        const angle = (Math.PI * 2 * i) / totalSpirits;
+        const radius = Math.max(window.innerWidth, window.innerHeight) * 0.65;
+        const startX = window.innerWidth / 2 + Math.cos(angle) * radius;
+        const startY = window.innerHeight / 2 + Math.sin(angle) * radius;
+
+        spirit.style.left = `${startX}px`;
+        spirit.style.top = `${startY}px`;
+        spirit.style.animationDelay = `${(i % 4) * 0.08}s`;
+
+        document.body.appendChild(spirit);
+        createdElements.push(spirit);
+    }
+
+    // --- FASE 2: REDEMOINHO + EXTRAÇÃO DE TÉCNICA INATA ---
+    setTimeout(() => {
+        if (!sessaoAtiva()) return;
+
+        const vortex = document.createElement('div');
+        vortex.className = 'geto-uzumaki-vortex';
+        document.body.appendChild(vortex);
+        createdElements.push(vortex);
+
+        const extractedLabels = [
+            "Técnica Inata Extraída",
+            "Semi-Classe 1+",
+            "Grau Especial",
+            "Energia Condensada"
+        ];
+
+        extractedLabels.forEach((label, idx) => {
+            setTimeout(() => {
+                if (!sessaoAtiva()) return;
+
+                const seal = document.createElement('div');
+                seal.className = 'geto-extracted-seal';
+                seal.textContent = `✦ ${label}`;
+
+                const extractAngle = (Math.PI / 2) * idx + Math.PI / 4;
+                const dist = window.innerWidth <= 768 ? 130 : 240;
+                seal.style.setProperty('--tx', `${Math.cos(extractAngle) * dist}px`);
+                seal.style.setProperty('--ty', `${Math.sin(extractAngle) * dist}px`);
+
+                document.body.appendChild(seal);
+                createdElements.push(seal);
+            }, 350 + idx * 180);
+        });
+
+        // --- FASE 3: DISPARO SUPERCONDENSADO + EXPLOSÃO ADIANTADA EM 2S ---
+        setTimeout(() => {
+            if (!sessaoAtiva()) return;
+
+            hurricaneAudio.pause();
+            hurricaneAudio.currentTime = 0;
+
+            // Adianta o áudio de forma segura sem quebrar a animação
+            try {
+                gojoAudio.currentTime = 2.0;
+            } catch (e) {
+                gojoAudio.addEventListener('loadedmetadata', () => {
+                    try { gojoAudio.currentTime = 2.0; } catch (err) {}
+                }, { once: true });
+            }
+            gojoAudio.muted = false;
+
+            document.body.classList.add('geto-domain-active');
+
+            const flash = document.createElement('div');
+            flash.className = 'geto-blast-flash';
+            document.body.appendChild(flash);
+            createdElements.push(flash);
+
+            const blast = document.createElement('div');
+            blast.className = 'geto-uzumaki-blast';
+            document.body.appendChild(blast);
+            createdElements.push(blast);
+
+            // 3 Ondas de Choque em sequência
+            for (let s = 0; s < 3; s++) {
+                setTimeout(() => {
+                    if (!sessaoAtiva()) return;
+                    const shockwave = document.createElement('div');
+                    shockwave.className = 'geto-shockwave';
+                    document.body.appendChild(shockwave);
+                    createdElements.push(shockwave);
+                }, s * 160);
+            }
+
+            // Partículas Roxas e Negras estilhaçando pela tela
+            const isMobile = window.innerWidth <= 768;
+            const qtdParticulas = isMobile ? 40 : 70;
+            const maxRaio = Math.max(window.innerWidth, window.innerHeight) * 0.65;
+
+            for (let p = 0; p < qtdParticulas; p++) {
+                const particle = document.createElement('div');
+                particle.className = p % 3 === 0 
+                    ? 'geto-explosion-particle dark-cursed' 
+                    : 'geto-explosion-particle';
+
+                const size = Math.random() * 14 + 7;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+
+                const pAngle = Math.random() * Math.PI * 2;
+                const pDistance = Math.random() * maxRaio + 120;
+                const dx = Math.cos(pAngle) * pDistance;
+                const dy = Math.sin(pAngle) * pDistance;
+
+                const duration = (Math.random() * 0.5 + 0.85).toFixed(2) + 's';
+
+                particle.style.setProperty('--dx', `${dx}px`);
+                particle.style.setProperty('--dy', `${dy}px`);
+                particle.style.setProperty('--dur', duration);
+
+                document.body.appendChild(particle);
+                createdElements.push(particle);
+            }
+
+            // Encerra e libera para novas ativações
+            setTimeout(finalizarGeto, 1500);
+
+        }, 1750);
+
+    }, 1100);
+}
+
+// =========================================================================
+// VERIFICAÇÃO DO CÓDIGO (Substitua a sua checkSecretCode por esta)
 // =========================================================================
 function checkSecretCode() {
-    const val = inputField.value.trim().toLowerCase(); 
-    
+    const val = inputField.value.trim().toLowerCase();
+
     if (val === 'sukuna') {
         closeSecretModal();
         activateMalevolentShrine();
-        const configuracaoSons = [
-            { arquivo: 'sukuna-slash.mp3', volume: 0.7 },
-            { arquivo: 'sukuna-slash2.mp3', volume: 0.7 }
-        ];
     } 
     else if (val === 'gojo') {
         closeSecretModal();
         activateHollowPurple();
     } 
+    else if (val === 'geto' || val === 'uzumaki') {
+        closeSecretModal();
+        activateGetoUzumaki();
+    } 
     else {
-        errorMsg.style.display = 'block'; 
-        inputField.value = ''; 
+        errorMsg.style.display = 'block';
+        inputField.value = '';
         inputField.focus();
     }
 }
@@ -1299,8 +1496,11 @@ function checkRewards(count) {
     if (count === 1) {
         message = `Você consumiu 1 Dedo do Sukuna!<br><br><strong>RECOMPENSA 1:</strong> A primeira palavra de poder foi revelada: <span style="color:#ff3333; font-weight:bold; letter-spacing:1px; font-size:1.3rem;">sukuna</span>.<br><span style="font-size:0.9rem; color:#aaa;">(Use-a no Pacto Secreto clicando no botão '?')</span>`;
     } 
+    else if (count === 2) {
+        message = `Você consumiu 2 Dedos do Sukuna!<br><br><strong>RECOMPENSA 2:</strong> A segunda palavra de poder foi revelada: <span style="color:#ffbe0b; font-weight:bold; letter-spacing:1px; font-size:1.3rem;">geto</span>.<br><span style="font-size:0.9rem; color:#aaa;">(Use-a no Pacto Secreto clicando no botão '?')</span>`;
+    } 
     else if (count === 3) {
-        message = `Você consumiu 3 Dedos do Sukuna!<br><br><strong>RECOMPENSA 2:</strong> A segunda palavra de poder foi revelada: <span style="color:#00bfff; font-weight:bold; letter-spacing:1px; font-size:1.3rem;">gojo</span>.<br><span style="font-size:0.9rem; color:#aaa;">(Use-a no Pacto Secreto clicando no botão '?')</span>`;
+        message = `Você consumiu 3 Dedos do Sukuna!<br><br><strong>RECOMPENSA 3:</strong> A terceira palavra de poder foi revelada: <span style="color:#00bfff; font-weight:bold; letter-spacing:1px; font-size:1.3rem;">gojo</span>.<br><span style="font-size:0.9rem; color:#aaa;">(Use-a no Pacto Secreto clicando no botão '?')</span>`;
     } 
     else if (count === 5) {
         message = `Você consumiu todos os 5 Dedos!<br><br><strong>RECOMPENSA MÁXIMA ALCANÇADA:</strong> Uma Arte Secreta e Proibida foi destrancada apenas para você!`;
@@ -1549,4 +1749,79 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('anti-print-blur');
         }
     });
+});
+
+// =========================================================================
+// PAUSAR MÚSICA DE FUNDO AO OUVIR AS VOZES DOS PERSONAGENS
+// =========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const bgMusic = document.getElementById('bg-music');
+    // Seleciona todos os players de áudio da página, exceto a música de fundo
+    const voicePlayers = document.querySelectorAll('audio:not(#bg-music)');
+
+    if (!bgMusic || voicePlayers.length === 0) return;
+
+    let wasBgMusicPlaying = false;
+
+    voicePlayers.forEach(player => {
+        player.addEventListener('play', () => {
+            // Pausa outros players de voz caso algum esteja tocando
+            voicePlayers.forEach(other => {
+                if (other !== player && !other.paused) other.pause();
+            });
+
+            if (!bgMusic.paused) {
+                wasBgMusicPlaying = true;
+                bgMusic.pause();
+            }
+        });
+
+        const resumeBgMusic = () => {
+            // Só retoma a música de fundo se nenhuma voz estiver tocando
+            const anyVoicePlaying = Array.from(voicePlayers).some(p => !p.paused);
+            if (!anyVoicePlaying && wasBgMusicPlaying) {
+                wasBgMusicPlaying = false;
+                bgMusic.play().catch(() => {});
+            }
+        };
+
+        player.addEventListener('pause', resumeBgMusic);
+        player.addEventListener('ended', resumeBgMusic);
+    });
+});
+
+// =========================================================================
+// EASTER EGG: EFEITO BLACK FLASH (CLIQUE DUPLO NA TELA)
+// =========================================================================
+document.addEventListener('dblclick', (e) => {
+    // Evita disparar ao clicar dentro de modais, botões ou imagens da galeria
+    if (e.target.closest('button, a, input, .lightbox-modal, .secret-modal, .reward-modal, .gallery-img')) {
+        return;
+    }
+
+    const flashContainer = document.createElement('div');
+    flashContainer.className = 'black-flash-container';
+    flashContainer.style.left = `${e.clientX}px`;
+    flashContainer.style.top = `${e.clientY}px`;
+
+    flashContainer.innerHTML = `
+        <div class="black-flash-core"></div>
+        <svg class="black-flash-bolt" viewBox="0 0 200 200">
+            <path d="M100,100 L60,30 L85,65 L20,40 M100,100 L150,25 L125,70 L185,55 M100,100 L160,150 L115,130 L140,190 M100,100 L40,160 L75,125 L15,145" 
+                  stroke="#000000" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M100,100 L60,30 L85,65 L20,40 M100,100 L150,25 L125,70 L185,55 M100,100 L160,150 L115,130 L140,190 M100,100 L40,160 L75,125 L15,145" 
+                  stroke="#ff0000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    `;
+
+    document.body.appendChild(flashContainer);
+    document.body.classList.add('black-flash-hit');
+
+    setTimeout(() => {
+        document.body.classList.remove('black-flash-hit');
+    }, 250);
+
+    setTimeout(() => {
+        flashContainer.remove();
+    }, 550);
 });
