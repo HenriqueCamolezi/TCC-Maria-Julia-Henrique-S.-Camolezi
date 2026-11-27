@@ -56,7 +56,7 @@ if (savedTheme) {
     updateThemeIcon(savedTheme);
 }
 
-themeToggleBtn.addEventListener('click', () => {
+if (themeToggleBtn) themeToggleBtn.addEventListener('click', () => {
     // Alterna a energia do domínio entre Escuro (Sukuna) e Claro (Gojo)
     const currentTheme = body.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -68,7 +68,7 @@ themeToggleBtn.addEventListener('click', () => {
 
 function updateThemeIcon(theme) {
     // 🌙 para Sukuna (Sombrio) | ☀️ para Gojo (Vazio Infinito/Claro)
-    themeToggleBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+    if (themeToggleBtn) themeToggleBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
 }
 
 // =========================================================================
@@ -78,6 +78,9 @@ const header = document.getElementById('header');
 let lastScrollTop = 0;
 
 window.addEventListener('scroll', () => {
+    // Nas páginas de galeria o menu de cima não existe
+    if (!header) return;
+
     // Pega a posição atual do scroll
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -214,6 +217,7 @@ const navMenu = document.querySelector('.nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
 
 function toggleMenu() {
+    if (!hamburger || !navMenu) return;
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
     
@@ -224,7 +228,7 @@ function toggleMenu() {
     }
 }
 
-hamburger.addEventListener('click', toggleMenu);
+if (hamburger) hamburger.addEventListener('click', toggleMenu);
 
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
@@ -415,7 +419,7 @@ document.addEventListener('DOMContentLoaded', initBackgroundEffects);
 // =========================================================================
 window.addEventListener('resize', () => {
     // Reposiciona elementos se necessário
-    if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
+    if (window.innerWidth <= 768 && navMenu && navMenu.classList.contains('active')) {
         toggleMenu();
     }
 });
@@ -483,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bgMusic.innerHTML = '';
     bgMusic.src = musicaEscolhida;
     bgMusic.preload = 'auto';
-    bgMusic.volume = 0.20;
+    bgMusic.volume = VOLUME_MUSICA_NORMAL;
     bgMusic.load();
 
     // 2. Restaura o tempo salvo APENAS quando o celular carregar o áudio
@@ -726,6 +730,22 @@ document.head.appendChild(styleFix);
 let isSukunaEnraged = false;
 let isGojoEnraged = false;
 let isGetoEnraged = false;
+
+// Volumes da música de fundo (único lugar onde esses valores são definidos)
+const VOLUME_MUSICA_NORMAL = 0.20;   // volume normal da música
+const VOLUME_MUSICA_ABAFADA = 0.002; // volume enquanto uma animação de código está rodando
+
+function abafarMusicaDeFundo() {
+    const bgMusic = document.getElementById('bg-music');
+    if (bgMusic) bgMusic.volume = VOLUME_MUSICA_ABAFADA;
+}
+
+function restaurarMusicaDeFundo() {
+    // Se outra animação ainda estiver rodando, ela restaura o volume quando terminar
+    if (isSukunaEnraged || isGojoEnraged || isGetoEnraged) return;
+    const bgMusic = document.getElementById('bg-music');
+    if (bgMusic) bgMusic.volume = VOLUME_MUSICA_NORMAL;
+}
 let originalGreeting = "";
 let originalName = "";
 let rageInterval = null;
@@ -917,8 +937,6 @@ function activateMalevolentShrine() {
         return audio;
     });
 
-    const bgMusic = document.getElementById('bg-music');
-
     // Quando o tempo configurado acabar:
     const finalizarSukuna = () => {
         if (!sessaoAtiva()) return; // já encerrado (ou é de uma execução antiga): não faz nada
@@ -937,8 +955,8 @@ function activateMalevolentShrine() {
         
         isSukunaEnraged = false;
 
-        // Restaura a música de fundo
-        if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
+        // Restaura a música de fundo ao volume original
+        restaurarMusicaDeFundo();
     };
 
     // O tempo só começa a contar quando o áudio principal REALMENTE começa a tocar
@@ -975,7 +993,7 @@ function activateMalevolentShrine() {
     });
     
     // Reduz a música de fundo
-    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
+    abafarMusicaDeFundo();
 
     // Inicia a "chuva" de cortes visuais
     const qtdCortes = Math.round((window.innerWidth <= 768 ? 6 : 8) * MULT_QUANTIDADE_CORTES); // 9 no celular, 12 no PC
@@ -1019,8 +1037,7 @@ function activateHollowPurple() {
     window.efeitoGojoAtual = gojoAudio;
     gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
     
-    const bgMusic = document.getElementById('bg-music');
-    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
+    abafarMusicaDeFundo();
 
     // --- NOVO: CRIA OS SEIS OLHOS DO GOJO ABRINDO ---
     const sixEyesOverlay = document.createElement('div');
@@ -1135,7 +1152,7 @@ function activateHollowPurple() {
 
             isGojoEnraged = false;
 
-            if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
+            restaurarMusicaDeFundo();
 
         }, tempoExplosao);
 
@@ -1173,8 +1190,7 @@ function activateGetoUzumaki() {
     gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
     window.efeitoGojoAtual = gojoAudio;
 
-    const bgMusic = document.getElementById('bg-music');
-    if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
+    abafarMusicaDeFundo();
 
     const createdElements = [];
     let finalizado = false;
@@ -1196,9 +1212,9 @@ function activateGetoUzumaki() {
 
             if (greeting) greeting.innerHTML = originalGreeting;
             if (nameElement) nameElement.innerHTML = originalName;
-            if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
         } finally {
             isGetoEnraged = false;
+            restaurarMusicaDeFundo(); // depois de liberar a flag, para o volume voltar ao normal
         }
     };
 
@@ -1378,7 +1394,7 @@ const fingerLocations = [
     // 1. VISÍVEL (Todas as páginas): Flutuando de forma óbvia no meio do rodapé (Footer).
     { id: 'f_footer', selector: 'footer', style: 'top: -30px; left: 50%; transform: translateX(-50%) rotate(15deg); z-index: 10;' },
     
-    // 2. BEM ESCONDIDO (Todas as páginas): Atrás da barra de navegação no topo esquerdo. Quase invisível, só a pontinha aparece.
+    // 2. BEM ESCONDIDO (Apenas na Página Inicial, pois as galerias não têm mais o menu): Atrás da barra de navegação no topo esquerdo. Quase invisível, só a pontinha aparece.
     { id: 'f_header', selector: '.nav-container', style: 'bottom: -35px; left: 15px; z-index: -1; transform: rotate(160deg); opacity: 0.6;' },
     
     // 3. VISÍVEL (Apenas na Página Inicial): Grudado na borda da imagem de perfil brilhante.
