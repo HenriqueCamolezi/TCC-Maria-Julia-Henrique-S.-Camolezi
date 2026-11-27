@@ -1159,7 +1159,7 @@ function activateGetoUzumaki() {
     if (nameElement) nameElement.innerHTML = "Uzumaki <span>Espiral</span>";
 
     // --- 1. ÁUDIO DO FURACÃO ---
-    const hurricaneAudio = criarEfeito('hurricane.mp3', 1.0);
+    const hurricaneAudio = criarEfeito('hurricane sound effect.mp3', 1.0);
     hurricaneAudio.play().catch(e => console.log('Áudio bloqueado:', e));
 
     // --- 2. ÁUDIO DA EXPLOSÃO (DESTRAVADO MUDO NO CLIQUE) ---
