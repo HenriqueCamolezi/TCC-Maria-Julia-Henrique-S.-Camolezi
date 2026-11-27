@@ -290,6 +290,11 @@ window.addEventListener('scroll', () => {
 // EFEITOS DE DOMÍNIO (Sukuna Slashes e Gojo Particles)
 // =========================================================================
 
+// --- AJUSTE DOS CORTES DA EXPANSÃO DE DOMÍNIO DO SUKUNA ---
+// 1.0 = original | 1.5 = 50% a mais | 2.0 = o dobro
+const MULT_QUANTIDADE_CORTES = 1.5; // quantidade de cortes gerados a cada rajada
+const MULT_VELOCIDADE_CORTES = 1.5; // velocidade da animação de cada corte
+
 // Função 1: Cortes Reais do Sukuna (Lâminas de Energia Amaldiçoada)
 window.createSlash = function() {
     const slash = document.createElement('div');
@@ -307,7 +312,7 @@ window.createSlash = function() {
         // Cortes intensos e longos durante a Expansão de Domínio
         const length = Math.random() * 250 + 180; // 180px a 430px
         const thickness = Math.random() * 3 + 2;  // 2px a 5px
-        const duration = Math.random() * 180 + 150;
+        const duration = (Math.random() * 180 + 150) / MULT_VELOCIDADE_CORTES; // mais rápido = duração menor
 
         slash.style.width = `${length}px`;
         slash.style.height = `${thickness}px`;
@@ -973,7 +978,7 @@ function activateMalevolentShrine() {
     if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
 
     // Inicia a "chuva" de cortes visuais
-    const qtdCortes = window.innerWidth <= 768 ? 6 : 8;
+    const qtdCortes = Math.round((window.innerWidth <= 768 ? 6 : 8) * MULT_QUANTIDADE_CORTES); // 9 no celular, 12 no PC
 
     rageInterval = setInterval(() => {
         for (let i = 0; i < qtdCortes; i++) {

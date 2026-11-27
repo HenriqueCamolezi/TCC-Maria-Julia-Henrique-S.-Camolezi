@@ -1252,23 +1252,43 @@ footer .small {
         font-size: 1.5rem;
     }
 
+    /* Barra superior compacta no mobile (menor altura = menos sobreposição no conteúdo) */
     .nav-container {
-        padding: 1rem 1.5rem;
+        padding: 0.6rem 1.25rem;
     }
 
     .logo {
-        font-size: 1rem;
+        font-size: 0.85rem;
     }
 
-    /* Animação do Hamburger para "X" */
+    .controls {
+        gap: 0.9rem;
+    }
+
+    #theme-toggle {
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 4px;
+    }
+
+    .hamburger {
+        gap: 4px;
+        padding: 5px 4px;
+    }
+
+    .hamburger .bar {
+        width: 21px;
+    }
+
+    /* Animação do Hamburger para "X" (distância entre as barras: 3px de altura + 4px de gap = 7px) */
     .hamburger.active .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
+        transform: translateY(7px) rotate(45deg);
     }
     .hamburger.active .bar:nth-child(2) {
         opacity: 0;
     }
     .hamburger.active .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
+        transform: translateY(-7px) rotate(-45deg);
     }
 
     /* Hero Section Mobile */
@@ -1493,11 +1513,11 @@ footer .small {
 
 @media (max-width: 480px) {
     .nav-container {
-        padding: 1rem;
+        padding: 0.6rem 1rem;
     }
 
     .logo {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
 
     .name {
