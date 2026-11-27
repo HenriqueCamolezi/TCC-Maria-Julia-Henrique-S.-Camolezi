@@ -2342,3 +2342,100 @@ body.anti-print-blur {
         display: none !important;
     }
 }
+
+/* =========================================================================
+   SEIS OLHOS DO GOJO (SIX EYES) - SEM FUNDO ESCURO
+   ========================================================================= */
+   .six-eyes-overlay {
+    position: fixed;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(24px, 6vw, 75px);
+    padding: 10px 20px;
+    background: transparent;
+    z-index: 100005;
+    pointer-events: none;
+    opacity: 0;
+    animation: sixEyesFadeIn 0.4s ease-out forwards;
+}
+
+.six-eye {
+    width: clamp(90px, 20vw, 165px);
+    height: clamp(45px, 10vw, 82px);
+    position: relative;
+    /* Brilho azul neon intenso diretamente nos olhos para destacar no fundo claro */
+    filter: drop-shadow(0 0 6px #0088ff) drop-shadow(0 0 18px #00bfff) drop-shadow(0 0 35px #0055ff);
+    transform-origin: center 55%;
+    animation: eyeOpen 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Etapa 1 do fim: As pálpebras fecham enquanto o olho ainda está visível */
+.six-eyes-overlay.closing .six-eye {
+    animation: eyeClose 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* Etapa 2 do fim: Só começa a sumir depois que o olho já fechou */
+.six-eyes-overlay.closing {
+    opacity: 1;
+    animation: sixEyesFadeOut 0.4s ease-in 0.45s forwards;
+}
+
+.six-eye-iris {
+    transform-origin: center;
+    animation: irisPulse 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes sixEyesFadeIn {
+    0% { opacity: 0; transform: translate(-50%, -20px) scale(0.92); }
+    100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+@keyframes sixEyesFadeOut {
+    0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -10px) scale(0.95); }
+}
+
+@keyframes eyeOpen {
+    0% {
+        transform: scaleY(0.03);
+        filter: brightness(2.5) drop-shadow(0 0 25px #00bfff);
+    }
+    60% {
+        transform: scaleY(1.08);
+    }
+    100% {
+        transform: scaleY(1);
+        filter: drop-shadow(0 0 6px #0088ff) drop-shadow(0 0 18px #00bfff) drop-shadow(0 0 35px #0055ff);
+    }
+}
+
+@keyframes eyeClose {
+    0% {
+        transform: scaleY(1);
+        filter: drop-shadow(0 0 6px #0088ff) drop-shadow(0 0 18px #00bfff);
+    }
+    70% {
+        transform: scaleY(0.08);
+        filter: brightness(2) drop-shadow(0 0 22px #00bfff) drop-shadow(0 0 38px #0055ff);
+    }
+    100% {
+        transform: scaleY(0.03);
+        filter: brightness(2.5) drop-shadow(0 0 16px #00bfff) drop-shadow(0 0 30px #0055ff);
+    }
+}
+
+@keyframes irisPulse {
+    0% { transform: scale(0.95); }
+    100% { transform: scale(1.06); }
+}
+
+@media (max-width: 768px) {
+    .six-eyes-overlay {
+        top: 14px;
+        padding: 8px 16px;
+    }
+}

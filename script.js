@@ -290,35 +290,48 @@ window.addEventListener('scroll', () => {
 // EFEITOS DE DOMÍNIO (Sukuna Slashes e Gojo Particles)
 // =========================================================================
 
-// Função 1: Cortes do Sukuna (Tema Escuro)
-function createSlash() {
+// Função 1: Cortes Reais do Sukuna (Lâminas de Energia Amaldiçoada)
+window.createSlash = function() {
     const slash = document.createElement('div');
-    slash.className = 'sukuna-slash';
+    slash.className = 'sukuna-slash-blade';
 
-    const slashes = ['/', '//', '╱', '⟋'];
-    slash.textContent = slashes[Math.floor(Math.random() * slashes.length)];
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    const angle = Math.random() * 360;
 
-    slash.style.left = Math.random() * window.innerWidth + 'px';
-    slash.style.top = Math.random() * window.innerHeight + 'px';
+    slash.style.left = `${x}px`;
+    slash.style.top = `${y}px`;
+    slash.style.setProperty('--angle', `${angle}deg`);
 
-    const rotation = Math.random() * 360;
-    slash.style.transform = `rotate(${rotation}deg)`;
+    if (isSukunaEnraged) {
+        // Cortes intensos e longos durante a Expansão de Domínio
+        const length = Math.random() * 250 + 180; // 180px a 430px
+        const thickness = Math.random() * 3 + 2;  // 2px a 5px
+        const duration = Math.random() * 180 + 150;
 
-    const size = Math.random() * 30 + 20;
-    slash.style.fontSize = `${size}px`;
+        slash.style.width = `${length}px`;
+        slash.style.height = `${thickness}px`;
+        slash.style.background = 'linear-gradient(90deg, transparent, #ff0000 30%, #ffffff 50%, #ff0000 70%, transparent)';
+        slash.style.boxShadow = '0 0 12px #ff0000, 0 0 25px #8b0000';
+        slash.style.animationDuration = `${duration}ms`;
 
-    const duration = Math.random() * 300 + 200;
-    slash.style.animationDuration = `${duration}ms`;
+        document.body.appendChild(slash);
+        setTimeout(() => slash.remove(), duration);
+    } else {
+        // Cortes sutis de fundo no tema escuro normal
+        const length = Math.random() * 100 + 60;
+        const duration = Math.random() * 250 + 200;
 
-    slash.style.color = 'rgba(255,255,255,0.35)';
-    slash.style.textShadow = '0 0 10px rgba(255,255,255,0.5)';
+        slash.style.width = `${length}px`;
+        slash.style.height = '2px';
+        slash.style.background = 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent)';
+        slash.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.3)';
+        slash.style.animationDuration = `${duration}ms`;
 
-    document.body.appendChild(slash);
-
-    setTimeout(() => {
-        slash.remove();
-    }, duration);
-}
+        document.body.appendChild(slash);
+        setTimeout(() => slash.remove(), duration);
+    }
+};
 
 // Função 2: Vazio Infinito do Gojo (Tema Claro)
 function createGojoParticle() {
@@ -451,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. CONFIGURE AQUI OS NOMES DOS SEUS ARQUIVOS DE ÁUDIO (.mp3)
     const MUSICA_HOME = 'King Gnu - SPECIALZ.mp3';       // Música para o index.html
-    const MUSICA_GALERIA = 'Where Our Blue Is ⧸ Tatsuya Kitani.mp3';  // Música para Gojo e Geto
+    const MUSICA_GALERIA = 'Where Our Blue Is Tatsuya Kitani.mp3';  // Música para Gojo e Geto
 
     // Identifica se está na página inicial ou nas galerias
     const caminho = window.location.pathname.toLowerCase();
@@ -562,10 +575,29 @@ document.addEventListener('DOMContentLoaded', () => {
 // INJEÇÃO DE CSS: Estilos Cinematográficos (Sukuna + Gojo)
 const styleFix = document.createElement('style');
 styleFix.innerHTML = `
-    /* SUKUNA CORTES */
-    .sukuna-slash {
-        z-index: 99999 !important; 
+/* SUKUNA CORTES REAIS (LÂMINAS) */
+    .sukuna-slash-blade {
+        position: fixed;
+        z-index: 99999 !important;
         pointer-events: none;
+        border-radius: 50%;
+        transform-origin: center;
+        animation: bladeCut ease-out forwards;
+    }
+
+    @keyframes bladeCut {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) rotate(var(--angle)) scaleX(0.1);
+        }
+        30% {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(var(--angle)) scaleX(1.1);
+        }
+        100% {
+            opacity: 0;
+            transform: translate(-50%, -50%) rotate(var(--angle)) scaleX(0.8);
+        }
     }
 
     /* GOJO VAZIO ROXO - ENERGIA CINEMÁTICA */
@@ -770,68 +802,69 @@ resetFingersBtn.addEventListener('click', () => {
 });
 
 // =========================================================================
-// FUNÇÃO DE CORTES (SUKUNA)
+// EFEITOS SONOROS - PRÉ-CARREGAMENTO COM FALLBACK (CORRIGIDO)
 // =========================================================================
-window.createSlash = function() {
-    const slash = document.createElement('div');
-    slash.className = 'sukuna-slash';
-    slash.style.left = Math.random() * window.innerWidth + 'px';
-    slash.style.top = Math.random() * window.innerHeight + 'px';
-    const rotation = Math.random() * 360;
-    slash.style.transform = `rotate(${rotation}deg)`;
-    const duration = Math.random() * 300 + 200;
-    slash.style.animationDuration = `${duration}ms`;
-
-    if (isSukunaEnraged) {
-        const enragedSlashes = ['X', '✖']; 
-        slash.textContent = enragedSlashes[Math.floor(Math.random() * enragedSlashes.length)];
-        const size = Math.random() * 80 + 80; 
-        slash.style.fontSize = `${size}px`;
-        slash.style.color = '#ff0000'; 
-        slash.style.textShadow = '0 0 20px #ff0000, 0 0 40px #8b0000';
-        slash.style.opacity = '1';
-        slash.style.fontWeight = '900'; 
-    } else {
-        const normalSlashes = ['/', '//', '╱', '⟋'];
-        slash.textContent = normalSlashes[Math.floor(Math.random() * normalSlashes.length)];
-        const size = Math.random() * 30 + 20;
-        slash.style.fontSize = `${size}px`;
-        slash.style.color = 'rgba(255,255,255,0.35)';
-        slash.style.textShadow = '0 0 10px rgba(255,255,255,0.5)';
-        slash.style.fontWeight = 'bold';
-    }
-    document.body.appendChild(slash);
-    setTimeout(() => slash.remove(), duration);
-};
-
-// =========================================================================
-// EFEITOS SONOROS - PRÉ-CARREGAMENTO (para tocarem INTEIROS no celular)
-// =========================================================================
-const urlsEfeitos = {}; // arquivo -> endereço do áudio já baixado na memória
+const urlsEfeitos = {};
+const efeitosIndisponiveis = new Set();
 const efeitosEmCarga = {};
 
-function precarregarEfeito(arquivo) {
-    if (efeitosEmCarga[arquivo]) return;
-    efeitosEmCarga[arquivo] = fetch(arquivo)
-        .then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
-        .then(blob => { urlsEfeitos[arquivo] = URL.createObjectURL(blob); })
-        .catch(() => { /* se falhar, o áudio carrega normalmente na hora de tocar */ });
+const sonsAlternativos = {
+    'sukuna domain expansion sound effect.mp3': [
+        'sukuna-domain.mp3',
+        'sukuna-domain-expansion-sound-effect.mp3',
+        'sukuna domain expansion sound effect.mp3'
+    ]
+};
+
+async function precarregarEfeito(arquivo) {
+    if (efeitosEmCarga[arquivo] || urlsEfeitos[arquivo] || efeitosIndisponiveis.has(arquivo)) return;
+
+    const candidatos = sonsAlternativos[arquivo] || [arquivo];
+
+    efeitosEmCarga[arquivo] = (async () => {
+        for (const nome of candidatos) {
+            try {
+                const resp = await fetch(encodeURI(nome));
+                if (resp.ok) {
+                    const blob = await resp.blob();
+                    urlsEfeitos[arquivo] = URL.createObjectURL(blob);
+                    return;
+                }
+            } catch (e) {
+                // Tenta o próximo nome da lista
+            }
+        }
+        efeitosIndisponiveis.add(arquivo);
+        console.warn(`Áudio não encontrado no servidor: ${arquivo}`);
+    })();
+
+    return efeitosEmCarga[arquivo];
 }
 
 function precarregarTodosEfeitos() {
-    ['sukuna domain expansion sound effect.mp3', 'sukuna-slash.mp3', 'sukuna-slash2.mp3', 'gojo-purple.mp3']
+    ['sukuna-slash.mp3', 'sukuna-slash2.mp3', 'gojo-purple.mp3']
         .forEach(precarregarEfeito);
 }
 
 function criarEfeito(arquivo, volume) {
-    const audio = new Audio(urlsEfeitos[arquivo] || arquivo);
+    // Se já sabemos que o arquivo deu 404, retorna um objeto silencioso sem gerar erro no console
+    if (efeitosIndisponiveis.has(arquivo)) {
+        return {
+            play: () => Promise.resolve(),
+            pause: () => {},
+            addEventListener: () => {},
+            currentTime: 0,
+            loop: false,
+            muted: false
+        };
+    }
+
+    const origem = urlsEfeitos[arquivo] || encodeURI(arquivo);
+    const audio = new Audio(origem);
     audio.preload = 'auto';
     audio.volume = volume;
     return audio;
 }
-
-// Começa a baixar os efeitos assim que a pessoa abre o botão secreto "?"
-secretBtn.addEventListener('click', precarregarTodosEfeitos, { once: true });
 
 // =========================================================================
 // ATIVAÇÃO SUKUNA (TEMA ESCURO) - VOLUMES SEPARADOS
@@ -845,7 +878,7 @@ function activateMalevolentShrine() {
     const sessaoAtiva = () => isSukunaEnraged && sessao === sukunaSessao;
 
     // --- CONFIGURAÇÃO DE TEMPO ---
-    const tempoCortes = 4000; // 4 segundos de massacre
+    const tempoCortes = 5000; // 5 segundos de massacre
 
     const greeting = document.querySelector('.greeting');
     const nameElement = document.querySelector('.name');
@@ -866,9 +899,8 @@ function activateMalevolentShrine() {
     // --- EFEITOS SONOROS (CONFIGURAÇÃO INDIVIDUAL) ---
     // Aqui você define o nome do arquivo e o volume exato (0.0 até 1.0) para cada um deles!
     const configuracaoSons = [
-        { arquivo: 'sukuna domain expansion sound effect.mp3', volume: 1.0 },
-        { arquivo: 'sukuna-slash.mp3', volume: 0.2 },
-        { arquivo: 'sukuna-slash2.mp3',volume: 0.2 },
+        { arquivo: 'sukuna-slash.mp3', volume: 0.50 },
+        { arquivo: 'sukuna-slash2.mp3',volume: 0.50 },
     ];
 
     // Transforma a sua configuração acima em áudios reais
@@ -939,9 +971,13 @@ function activateMalevolentShrine() {
     if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
 
     // Inicia a "chuva" de cortes visuais
+    const qtdCortes = window.innerWidth <= 768 ? 6 : 8;
+
     rageInterval = setInterval(() => {
-        for (let i = 0; i < 5; i++) createSlash();
-    }, 120);
+        for (let i = 0; i < qtdCortes; i++) {
+            window.createSlash();
+        }
+    }, 100);
 }
 
 // =========================================================================
@@ -951,10 +987,10 @@ function activateHollowPurple() {
     if (isSukunaEnraged || isGojoEnraged) return;
     isGojoEnraged = true;
 
-    // --- CONFIGURAÇÃO DE TEMPO (Ajuste para sincronizar com seu áudio) ---
-    // Valores em milissegundos (Ex: 2300 = 2.3 segundos)
-    const tempoConvergencia = 2300; // Tempo que a esfera Vermelha e Azul demoram para se chocar
-    const tempoExplosao = 2300;     // Tempo que a tela fica roxa tremendo até o efeito acabar
+    // --- CONFIGURAÇÃO DE TEMPO ---
+    const tempoConvergencia = 2300; // Tempo que as esferas demoram para se chocar
+    const tempoExplosao = 2300;     // Tempo da explosão até o fim do efeito
+    const tempoFecharOlhos = 900;   // Inicia o fechamento 0.9s antes do fim
 
     const greeting = document.querySelector('.greeting');
     const nameElement = document.querySelector('.name');
@@ -972,15 +1008,54 @@ function activateHollowPurple() {
     if(nameElement) nameElement.innerHTML = "Vazio <span>Roxo</span>";
 
     // --- EFEITO SONORO DO GOJO ---
-    const gojoAudio = criarEfeito('gojo-purple.mp3', 1.0); // Coloque o nome do seu arquivo MP3 aqui
-    window.efeitoGojoAtual = gojoAudio; // guarda uma referência para o áudio não ser descartado no meio
+    const gojoAudio = criarEfeito('gojo-purple.mp3', 1.0);
+    window.efeitoGojoAtual = gojoAudio;
     gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
     
-    // Abaixa a música de fundo
     const bgMusic = document.getElementById('bg-music');
     if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.002;
 
-    // 1. Cria as Esferas de Atração (Azul e Vermelho) com tempo ajustado
+    // --- NOVO: CRIA OS SEIS OLHOS DO GOJO ABRINDO ---
+    const sixEyesOverlay = document.createElement('div');
+    sixEyesOverlay.className = 'six-eyes-overlay';
+    
+    const eyeSvg = (idSuffix) => `
+        <svg class="six-eye" viewBox="0 0 200 100">
+            <defs>
+                <radialGradient id="gojoIris-${idSuffix}" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="25%" stop-color="#a6f0ff" />
+                    <stop offset="65%" stop-color="#00bfff" />
+                    <stop offset="92%" stop-color="#0055cc" />
+                    <stop offset="100%" stop-color="#001f4d" />
+                </radialGradient>
+                <clipPath id="eyeClip-${idSuffix}">
+                    <path d="M 10,55 Q 100,5 190,55 Q 100,98 10,55 Z" />
+                </clipPath>
+            </defs>
+            <!-- Esclera (fundo do olho) -->
+            <path d="M 10,55 Q 100,5 190,55 Q 100,98 10,55 Z" fill="#e6f7ff" />
+            <!-- Íris e Pupila com brilho -->
+            <g clip-path="url(#eyeClip-${idSuffix})">
+                <g class="six-eye-iris">
+                    <circle cx="100" cy="52" r="34" fill="url(#gojoIris-${idSuffix})" />
+                    <circle cx="100" cy="52" r="11" fill="#e0faff" opacity="0.9" />
+                    <!-- Reflexos cristalinos -->
+                    <circle cx="88" cy="40" r="6" fill="#ffffff" />
+                    <circle cx="114" cy="62" r="3" fill="#ffffff" opacity="0.85" />
+                </g>
+            </g>
+            <!-- Cílios brancos característicos do Gojo -->
+            <path d="M 6,56 Q 100,0 194,56" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" />
+            <path d="M 22,42 L 10,32 M 45,28 L 36,16 M 155,28 L 164,16 M 178,42 L 190,32" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <path d="M 18,58 Q 100,98 182,58" fill="none" stroke="#80dfff" stroke-width="2.5" stroke-linecap="round" />
+        </svg>
+    `;
+
+    sixEyesOverlay.innerHTML = eyeSvg('left') + eyeSvg('right');
+    document.body.appendChild(sixEyesOverlay);
+
+    // 1. Cria as Esferas de Atração (Azul e Vermelho)
     const blueOrb = document.createElement('div');
     blueOrb.className = 'hollow-orb orb-blue';
     blueOrb.style.animationDuration = (tempoConvergencia / 1000) + 's'; 
@@ -992,28 +1067,24 @@ function activateHollowPurple() {
     document.body.appendChild(blueOrb);
     document.body.appendChild(redOrb);
 
-    const elementsToRemove = [blueOrb, redOrb];
+    const elementsToRemove = [sixEyesOverlay, blueOrb, redOrb];
 
-    // 2. Momento do Impacto (Acontece 100ms antes das esferas baterem no meio)
+    // 2. Momento do Impacto
     setTimeout(() => {
-        // Inicia Tremor Violento de Câmera
         document.body.classList.add('gojo-domain-active');
 
-        // Cria a Singularidade Roxa
         const purpleOrb = document.createElement('div');
         purpleOrb.className = 'hollow-orb orb-purple';
         purpleOrb.style.animationDuration = (tempoExplosao / 1000) + 's';
         document.body.appendChild(purpleOrb);
         elementsToRemove.push(purpleOrb);
 
-        // Cria o Clarão da Tela
         const flashScreen = document.createElement('div');
         flashScreen.className = 'purple-flash';
         flashScreen.style.animationDuration = (tempoExplosao / 1000) + 's';
         document.body.appendChild(flashScreen);
         elementsToRemove.push(flashScreen);
 
-        // Cria Anéis de Onda de Choque (Mais lentos)
         for(let i = 0; i < 3; i++) {
             setTimeout(() => {
                 const shockwave = document.createElement('div');
@@ -1024,7 +1095,6 @@ function activateHollowPurple() {
             }, i * 200); 
         }
 
-        // Cria Partículas de Energia voando
         for (let i = 0; i < 40; i++) {
             const particle = document.createElement('div');
             particle.className = 'purple-particle';
@@ -1042,6 +1112,11 @@ function activateHollowPurple() {
             elementsToRemove.push(particle);
         }
 
+        // --- NOVO: FECHA OS OLHOS POUCO ANTES DA EXPLOSÃO ACABAR ---
+        setTimeout(() => {
+            sixEyesOverlay.classList.add('closing');
+        }, Math.max(0, tempoExplosao - tempoFecharOlhos));
+
         // 3. Finaliza tudo e limpa a tela após a explosão
         setTimeout(() => {
             document.body.classList.remove('gojo-domain-active');
@@ -1053,7 +1128,6 @@ function activateHollowPurple() {
 
             isGojoEnraged = false;
 
-            // Restaura o volume da música de fundo
             if (bgMusic && !bgMusic.paused) bgMusic.volume = 0.02;
 
         }, tempoExplosao);
@@ -1070,6 +1144,10 @@ function checkSecretCode() {
     if (val === 'sukuna') {
         closeSecretModal();
         activateMalevolentShrine();
+        const configuracaoSons = [
+            { arquivo: 'sukuna-slash.mp3', volume: 0.7 },
+            { arquivo: 'sukuna-slash2.mp3', volume: 0.7 }
+        ];
     } 
     else if (val === 'gojo') {
         closeSecretModal();
