@@ -735,34 +735,16 @@ let isGetoEnraged = false;
 const VOLUME_MUSICA_NORMAL = 0.20;   // volume normal da música
 const VOLUME_MUSICA_ABAFADA = 0.002; // volume enquanto uma animação de código está rodando
 
-// Controle do volume: cada animação "pega" o abafamento e devolve quando termina.
-// O volume só volta quando a ÚLTIMA animação devolve, e volta para o valor que a música
-// tinha ANTES do primeiro abafamento (não para um número fixo).
-let abafamentosAtivos = 0;
-let volumeAntesDeAbafar = null;
-
 function abafarMusicaDeFundo() {
     const bgMusic = document.getElementById('bg-music');
-    if (!bgMusic) return () => {};
+    if (bgMusic) bgMusic.volume = VOLUME_MUSICA_ABAFADA;
+}
 
-    if (abafamentosAtivos === 0) {
-        // Guarda o volume atual (ignora um valor "abafado" que tenha ficado preso por engano)
-        volumeAntesDeAbafar = bgMusic.volume > VOLUME_MUSICA_ABAFADA ? bgMusic.volume : VOLUME_MUSICA_NORMAL;
-    }
-    abafamentosAtivos++;
-    bgMusic.volume = VOLUME_MUSICA_ABAFADA;
-
-    // Função de devolução: pode ser chamada várias vezes, só conta uma
-    let devolvido = false;
-    return function restaurarMusicaDeFundo() {
-        if (devolvido) return;
-        devolvido = true;
-        abafamentosAtivos = Math.max(0, abafamentosAtivos - 1);
-        if (abafamentosAtivos === 0) {
-            bgMusic.volume = volumeAntesDeAbafar !== null ? volumeAntesDeAbafar : VOLUME_MUSICA_NORMAL;
-            volumeAntesDeAbafar = null;
-        }
-    };
+function restaurarMusicaDeFundo() {
+    // Se outra animação ainda estiver rodando, ela restaura o volume quando terminar
+    if (isSukunaEnraged || isGojoEnraged || isGetoEnraged) return;
+    const bgMusic = document.getElementById('bg-music');
+    if (bgMusic) bgMusic.volume = VOLUME_MUSICA_NORMAL;
 }
 let originalGreeting = "";
 let originalName = "";
@@ -917,11 +899,10 @@ function criarEfeito(arquivo, volume) {
 let sukunaSessao = 0; // identifica cada execução: áudio/timer atrasado de uma execução antiga não mexe na nova
 
 function activateMalevolentShrine() {
-    if (isSukunaEnraged || isGojoEnraged || isGetoEnraged) return; 
+    if (isSukunaEnraged || isGojoEnraged) return; 
     isSukunaEnraged = true;
     const sessao = ++sukunaSessao;
     const sessaoAtiva = () => isSukunaEnraged && sessao === sukunaSessao;
-    const liberarMusica = abafarMusicaDeFundo(); // reduz a música de fundo; devolvida no final
 
     // --- CONFIGURAÇÃO DE TEMPO ---
     const tempoCortes = 5000; // 5 segundos de massacre
@@ -974,8 +955,8 @@ function activateMalevolentShrine() {
         
         isSukunaEnraged = false;
 
-        // Restaura a música de fundo ao volume anterior
-        liberarMusica();
+        // Restaura a música de fundo ao volume original
+        restaurarMusicaDeFundo();
     };
 
     // O tempo só começa a contar quando o áudio principal REALMENTE começa a tocar
@@ -1011,6 +992,9 @@ function activateMalevolentShrine() {
         }
     });
     
+    // Reduz a música de fundo
+    abafarMusicaDeFundo();
+
     // Inicia a "chuva" de cortes visuais
     const qtdCortes = Math.round((window.innerWidth <= 768 ? 6 : 8) * MULT_QUANTIDADE_CORTES); // 9 no celular, 12 no PC
 
@@ -1025,9 +1009,8 @@ function activateMalevolentShrine() {
 // ATIVAÇÃO GOJO - VAZIO ROXO CINEMÁTICO (TEMA CLARO) - SINCRONIZADO
 // =========================================================================
 function activateHollowPurple() {
-    if (isSukunaEnraged || isGojoEnraged || isGetoEnraged) return;
+    if (isSukunaEnraged || isGojoEnraged) return;
     isGojoEnraged = true;
-    const liberarMusica = abafarMusicaDeFundo(); // reduz a música de fundo; devolvida no final
 
     // --- CONFIGURAÇÃO DE TEMPO ---
     const tempoConvergencia = 2300; // Tempo que as esferas demoram para se chocar
@@ -1053,6 +1036,8 @@ function activateHollowPurple() {
     const gojoAudio = criarEfeito('gojo-purple.mp3', 1.0);
     window.efeitoGojoAtual = gojoAudio;
     gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
+    
+    abafarMusicaDeFundo();
 
     // --- NOVO: CRIA OS SEIS OLHOS DO GOJO ABRINDO ---
     const sixEyesOverlay = document.createElement('div');
@@ -1167,7 +1152,7 @@ function activateHollowPurple() {
 
             isGojoEnraged = false;
 
-            liberarMusica();
+            restaurarMusicaDeFundo();
 
         }, tempoExplosao);
 
@@ -1182,7 +1167,6 @@ let getoSessao = 0;
 function activateGetoUzumaki() {
     if (isSukunaEnraged || isGojoEnraged || isGetoEnraged) return;
     isGetoEnraged = true;
-    const liberarMusica = abafarMusicaDeFundo(); // reduz a música de fundo; devolvida no final
 
     const sessao = ++getoSessao;
     const sessaoAtiva = () => isGetoEnraged && sessao === getoSessao;
@@ -1206,6 +1190,8 @@ function activateGetoUzumaki() {
     gojoAudio.play().catch(e => console.log('Áudio bloqueado:', e));
     window.efeitoGojoAtual = gojoAudio;
 
+    abafarMusicaDeFundo();
+
     const createdElements = [];
     let finalizado = false;
 
@@ -1228,7 +1214,7 @@ function activateGetoUzumaki() {
             if (nameElement) nameElement.innerHTML = originalName;
         } finally {
             isGetoEnraged = false;
-            liberarMusica(); // sempre devolve o volume da música, mesmo se algo acima falhar
+            restaurarMusicaDeFundo(); // depois de liberar a flag, para o volume voltar ao normal
         }
     };
 

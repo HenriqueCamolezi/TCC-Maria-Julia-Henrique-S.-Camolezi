@@ -2468,9 +2468,26 @@ body.anti-print-blur {
     transform: translate(-50%, -50%);
     width: 300px;
     height: 300px;
-    pointer-events: none;
-    z-index: 999999;
+    pointer-events: none !important;
+    /* Maior valor possível: fica acima de qualquer modal, lightbox, menu e do cursor customizado */
+    z-index: 2147483647 !important;
     animation: blackFlashPop 0.55s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+/* Inverte as cores de tudo que está atrás dela (o impacto do golpe) */
+.black-flash-invert {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    mix-blend-mode: difference;
+    pointer-events: none !important;
+    z-index: 2147483646 !important;
+    animation: blackFlashInvert 0.25s ease-out forwards;
+}
+
+/* Toque duplo não pode virar zoom da página no celular (a pinça continua funcionando) */
+html, body {
+    touch-action: manipulation;
 }
 
 .black-flash-core {
@@ -2495,8 +2512,10 @@ body.anti-print-blur {
     filter: drop-shadow(0 0 6px #ff0000) drop-shadow(0 0 14px #ff0000);
 }
 
-body.black-flash-hit {
-    animation: blackFlashImpact 0.25s ease-out;
+/* O tremor vai no <main> e NÃO no <body>: transform/filter no body mudam o ponto de referência
+   dos elementos position: fixed e jogavam o raio (e os modais) para o lugar errado ao rolar a página. */
+body.black-flash-hit main {
+    animation: blackFlashShake 0.25s ease-out;
 }
 
 @keyframes blackFlashPop {
@@ -2505,10 +2524,16 @@ body.black-flash-hit {
     100% { transform: translate(-50%, -50%) scale(1.6) rotate(25deg); opacity: 0; }
 }
 
-@keyframes blackFlashImpact {
-    0% { filter: invert(1) contrast(200%); transform: translate(-4px, 4px); }
-    50% { filter: invert(0.8) contrast(150%); transform: translate(4px, -4px); }
-    100% { filter: none; transform: translate(0, 0); }
+@keyframes blackFlashInvert {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0; }
+}
+
+@keyframes blackFlashShake {
+    0% { transform: translate(-4px, 4px); }
+    50% { transform: translate(4px, -4px); }
+    100% { transform: translate(0, 0); }
 }
 
 /* =========================================================================
